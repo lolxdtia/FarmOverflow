@@ -1,0 +1,407 @@
+<div class="win-content message-list-wrapper searchable-list ng-scope">
+    <header class="win-head">
+        <h2 class="ng-binding"><#= locale("farm", "title") #> <span class="small">v<#= version #></span></h2>
+        <ul class="list-btn">
+            <li><a href="#" class="twOverflow-close size-34x34 btn-red icon-26x26-close"></a></li>
+        </ul>
+    </header>
+
+    <div class="win-main">
+        <!--
+            ################################################## 
+            ###################### ABAS ######################
+            ##################################################
+        -->
+        <div class="tabs tabs-bg">
+            <div class="tabs-three-col">
+                <div class="tab" tab="info">
+                    <div class="tab-inner">
+                        <div><a href="#" class="btn-icon btn-orange"><#= locale("farm", "general.info") #></a></div>
+                    </div>
+                </div>
+                <div class="tab" tab="settings">
+                    <div class="tab-inner">
+                        <div><a href="#" class="btn-icon btn-orange"><#= locale("farm", "general.settings") #></a></div>
+                    </div>
+                </div>
+                <div class="tab" tab="log">
+                    <div class="tab-inner">
+                        <div><a href="#" class="btn-icon btn-orange"><#= locale("farm", "general.events") #></a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INFORMAÇÕES -->
+        <div class="box-paper footer has-footer-upper twOverflow-content-info">
+            <img src="https://i.imgur.com/0ZBQWrb.png"/>
+            <p class="center"><#- locale("farm", "info.developedBy") #> <a href="<#- author.url #>"><#- author.name #></a>  &lt;<#- author.email #>&gt;</p>
+            
+            <h5 class="twx-section collapse"><#- locale("farm", "info.presets1") #></h5>
+            <div>
+                <p><#- locale("farm", "info.presets2") #></p>
+                <p><#- locale("farm", "info.presets3") #></p>
+                <p><#- locale("farm", "info.presets4") #></p>
+                <p><#- locale("farm", "info.presets5") #></p>
+                <p>
+                    <span class="sample">Farm (Spears)</span>
+                    <br/>
+                    <span class="sample">Farm \"Lança\"</span>
+                    <br/>
+                    <span class="sample">Farm {Cavalary}</span>
+                </p>
+                <p><#- locale("farm", "info.presets6") #></p>
+            </div>
+            <h5 class="twx-section collapse"><#- locale("farm", "info.ignore1") #></h5>
+            <div>
+                <p><#- locale("farm", "info.ignore2") #></p>
+            </div>
+            <h5 class="twx-section collapse"><#- locale("farm", "info.include1") #></h5>
+            <div>
+                <p><#- locale("farm", "info.include2") #></p>
+            </div>
+            <h5 class="twx-section collapse"><#- locale("farm", "info.randomBase1") #></h5>
+            <div>
+                <p><#- locale("farm", "info.randomBase2") #></p>
+            </div>
+            <h5 class="twx-section collapse"><#- locale("farm", "info.groupOnly1") #></h5>
+            <div>
+                <p><#- locale("farm", "info.groupOnly2") #></p>
+            </div>
+            <h5 class="twx-section collapse"><#- locale("farm", "info.ignoreOnLoss1") #></h5>
+            <div>
+                <p><#- locale("farm", "info.ignoreOnLoss2") #></p>
+                <p><#- locale("farm", "info.ignoreOnLoss3") #></p>
+            </div>
+            <h5 class="twx-section collapse"><#- locale("farm", "info.priorityTargets1") #></h5>
+            <div>
+                <p><#- locale("farm", "info.priorityTargets2") #></p>
+            </div>
+            <h5 class="twx-section collapse"><#- locale("farm", "info.remote1") #></h5>
+            <div>
+                <p><#- locale("farm", "info.remote2") #></p>
+                <p><#- locale("farm", "info.remote3") #></p>
+                <p><#- locale("farm", "info.remote4") #></p>
+                <p>&bull; <b>on</b> <i><#- locale("farm", "info.remote5") #></i></p>
+                <p>&bull; <b>off</b> <i><#- locale("farm", "info.remote6") #></i></p>
+                <p>&bull; <b>status</b> <i><#- locale("farm", "info.remote7") #></i></p>
+                <p><#- locale("farm", "info.remote8") #></p>
+                <p><#- locale("farm", "info.remote9") #></p>
+                <p><#- locale("farm", "info.remote10") #></p>
+            </div>
+            
+            <!-- Por algum motivo é preciso ter algum elemento visivel no final da aba para não quebrar o scrollbar -->
+            <div></div>
+        </div>
+
+        <!--
+            ################################################## 
+            ################# CONFIGURAÇÕES ##################
+            ##################################################
+        -->
+        <div class="box-paper footer has-footer-upper twOverflow-content-settings">
+            <form class="settings">
+                <h5 class="twx-section collapse"><#= locale("farm", "settings.basicSettings") #></h5>
+                <table class="tbl-border-light tbl-striped">
+                    <colgroup>
+                        <col width="50%">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.presets") #>">
+                                <span class="icon-34x34-preset"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.presetName") #></span>
+                            </td>
+                            <td>
+                                <select data-setting="presetName" class="preset"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.groupIgnore") #>">
+                                <span class="icon-20x20-queue-indicator-short"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.groupIgnore") #></span>
+                            </td>
+                            <td>
+                                <select data-setting="groupIgnore" class="ignore"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.groupInclude") #>">
+                                <span class="icon-20x20-queue-indicator-long"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.groupInclude") #></span>
+                            </td>
+                            <td>
+                                <select data-setting="groupInclude" class="include"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.groupOnly") #>">
+                                <span class="icon-20x20-favourite"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.groupOnly") #></span>
+                            </td>
+                            <td>
+                                <select data-setting="groupOnly" class="only"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.randomBase") #>">
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.randomBase") #></span>
+                            </td>
+                            <td>
+                                <input data-setting="randomBase" type="number" class="textfield-border" min="0" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.priorityTargets") #>">
+                                <span class="icon-34x34-name_changed"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.priorityTargets") #></span>
+                            </td>
+                            <td>
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-priorityTargets">
+                                    <input id="settings-priorityTargets" type="checkbox" data-setting="priorityTargets">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.ignoreOnLoss") #>">
+                                <span class="ff-cell-fix"><#- locale("farm", "settings.ignoreOnLoss") #></span>
+                            </td>
+                            <td>
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-ignoreOnLoss">
+                                    <input id="settings-ignoreOnLoss" type="checkbox" data-setting="ignoreOnLoss">
+                                </label>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5 class="twx-section collapse"><#= locale("farm", "settings.singleCycleHeader") #></h5>
+                <table class="tbl-border-light tbl-striped">
+                    <colgroup>
+                        <col width="50%">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.singleCycle") #>">
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.singleCycle") #></span>
+                            </td>
+                            <td>
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-singleCycle">
+                                    <input id="settings-singleCycle" type="checkbox" data-setting="singleCycle">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.singleCycleNotifs") #>">
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.singleCycleNotifs") #></span>
+                            </td>
+                            <td>
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-singleCycleNotifs">
+                                    <input id="settings-singleCycleNotifs" type="checkbox" data-setting="singleCycleNotifs">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.singleCycleInterval") #>">
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.singleCycleInterval") #></span>
+                            </td>
+                            <td><input data-setting="singleCycleInterval" type="text" class="textfield-border" placeholder="00:00:00"></td>
+                        </tr>                        
+                    </tbody>
+                </table>
+
+                <h5 class="twx-section collapse"><#= locale("farm", "settings.filters") #></h5>
+                <table class="tbl-border-light tbl-striped">
+                    <colgroup>
+                        <col width="50%">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="icon-26x26-double-arrow"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.minDistance") #></span>
+                            </td>
+                            <td><input data-setting="minDistance" type="number" class="textfield-border" min="0" max="60" required></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="icon-26x26-double-arrow"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.maxDistance") #></span>
+                            </td>
+                            <td><input data-setting="maxDistance" type="number" class="textfield-border" min="1" max="60" required></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="icon-34x34-points-per-village"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.minPoints") #></span>
+                            </td>
+                            <td><input data-setting="minPoints" type="number" class="textfield-border" required></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="icon-34x34-points-per-village"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.maxPoints") #></span>
+                            </td>
+                            <td><input data-setting="maxPoints" type="number" class="textfield-border" required></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="icon-26x26-time"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.maxTravelTime") #></span>
+                            </td>
+                            <td><input data-setting="maxTravelTime" type="text" class="textfield-border" pattern="\\d{1,2}:\\d{1,2}:\\d{1,2}" required></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5 class="twx-section collapse"><#= locale("farm", "settings.events") #></h5>
+                <table class="tbl-border-light tbl-striped">
+                    <colgroup>
+                        <col width="50%">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="icon-26x26-info"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.eventsLimit") #></span>
+                            </td>
+                            <td><input data-setting="eventsLimit" type="number" class="textfield-border" min="1" required></td>
+                        </tr>
+
+                        <tr>
+                            <td><#= locale("farm", "settings.eventAttack") #></td>
+                            <td>
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-eventAttack">
+                                    <input id="settings-eventAttack" type="checkbox" data-setting="eventAttack">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><#= locale("farm", "settings.eventVillageChange") #></td>
+                            <td>
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-eventVillageChange">
+                                    <input id="settings-eventVillageChange" type="checkbox" data-setting="eventVillageChange">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><#= locale("farm", "settings.eventPriorityAdd") #></td>
+                            <td>
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-eventPriorityAdd">
+                                    <input id="settings-eventPriorityAdd" type="checkbox" data-setting="eventPriorityAdd">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><#= locale("farm", "settings.eventIgnoredVillage") #></td>
+                            <td>
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-eventIgnoredVillage">
+                                    <input id="settings-eventIgnoredVillage" type="checkbox" data-setting="eventIgnoredVillage">
+                                </label>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5 class="twx-section collapse"><#= locale("farm", "settings.others") #></h5>
+                <table class="tbl-border-light tbl-striped">
+                    <colgroup>
+                        <col width="50%">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.remote") #>">
+                                <span class="icon-26x26-message-misc"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.remote") #></span>
+                            </td>
+                            <td><input data-setting="remoteId" type="text" class="textfield-border" min="3" max="45"></td>
+                        </tr>
+                        <tr>
+                            <td><#= locale("farm", "settings.hotkeySwitch") #></td>
+                            <td><input data-setting="hotkeySwitch" type="text" class="textfield-border"></td>
+                        </tr>
+                        <tr>
+                            <td><#= locale("farm", "settings.hotkeyWindow") #></td>
+                            <td><input data-setting="hotkeyWindow" type="text" class="textfield-border"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="icon-34x34-general"></span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.language") #></span>
+                            </td>
+                            <td>
+                                <select data-setting="language" class="language">
+                                    <# locale.eachLang("farm", function(id, name) { #>
+                                        <option value="<#= id #>"><#= name #></option>
+                                    <# }) #>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+
+        <!--
+            ################################################## 
+            #################### EVENTOS #####################
+            ##################################################
+        -->
+        <div class="box-paper footer has-footer-upper twOverflow-content-log">
+            <div class="screen-tribe-news rich-text">
+                <h5 class="twx-section collapse"><#= locale("farm", "events.status") #></h5>
+                <table class="tbl-border-light tbl-news tbl-big-header">
+                    <colgroup>
+                        <col width="135px">
+                        <col width="*">
+                    </colgroup>
+                    <tbody>
+                        <tr class="list-item">
+                            <td class="status" colspan="2" class="cell-center"><#= locale("farm", "events.paused") #></td>
+                        </tr>
+                        <tr class="reduced">
+                            <td><#= locale("farm", "events.selectedVillage") #></td>
+                            <td class="selected"></td>
+                        </tr>
+                        <tr class="reduced">
+                            <td><#= locale("farm", "events.lastAttack") #></td>
+                            <td class="last"><#= locale("farm", "general.none") #></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5 class="twx-section collapse"><#= locale("farm", "general.events") #></h5>
+                <table class="tbl-border-light tbl-news tbl-big-header">
+                    <colgroup>
+                        <col width="76px">
+                        <col>
+                    </colgroup>
+                    <tbody class="events">
+                        <tr class="reduced nothing">
+                            <td colspan="2">
+                                <div>
+                                    <span><#= locale("farm", "events.nothingYet") #></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <footer class="win-foot">
+        <ul class="list-btn list-center">
+            <li class="twOverflow-button-settings">
+                <a class="btn-orange btn-border save"><#= locale("farm", "settings.save") #></a>
+            </li>
+            <li>
+                <a class="btn-green btn-border start"><#= locale("farm", "general.start") #></a>
+            </li>
+        </ul>
+    </footer>
+</div>
