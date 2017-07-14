@@ -51,7 +51,7 @@ define('TWOverflow/Farm/Village', [
     Village.prototype.updateCommands = function (callback) {
         var self = this
 
-        $socket.emit($route.GET_OWN_COMMANDS, {
+        socketService.emit(routeProvider.GET_OWN_COMMANDS, {
             village_id: self.id
         }, function (data) {
             var commandList = new CommandListModel([], self.id)
@@ -91,9 +91,9 @@ define('TWOverflow/Farm/Village', [
     Village.prototype.load = function (callback) {
         var self = this
 
-        return $villageService.ensureVillageDataLoaded(this.id, function () {
+        return villageService.ensureVillageDataLoaded(this.id, function () {
             if (!self.original.isInitialized()) {
-                $villageService.initializeVillage(self.original)
+                villageService.initializeVillage(self.original)
             }
 
             callback()

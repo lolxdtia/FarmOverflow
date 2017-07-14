@@ -33,7 +33,7 @@ define('TWOverflow/Farm/interface', [
 
     /**
      * Tipo de input usado por cada opção de configuração.
-     * 
+     *
      * @type {Object}
      */
     var settingsMap = {
@@ -79,7 +79,7 @@ define('TWOverflow/Farm/interface', [
 
     /**
      * Gera um <select>
-     * 
+     *
      * @param  {String} value - Valor do select
      * @param  {String} label - Texto exibido no select
      * @param  {Boolean} selected - Inclui o atributo "selected"
@@ -91,14 +91,14 @@ define('TWOverflow/Farm/interface', [
 
     /**
      * Formato das datas usadas nos eventos.
-     * 
+     *
      * @type {String}
      */
     var dateFormat = 'HH:mm:ss dd/MM/yyyy'
 
     /**
      * Tradução de "desativado" para a linguagem selecionada.
-     * 
+     *
      * @type {String}
      */
     var disabled
@@ -112,14 +112,14 @@ define('TWOverflow/Farm/interface', [
 
     /**
      * Elementos dos grupos usados pelo FarmOverflow.
-     * 
+     *
      * @type {Object}
      */
     var $groups
 
     /**
      * Loop em todas configurações do FarmOverflow
-     * 
+     *
      * @param {Function} callback
      */
     var eachSetting = function (callback) {
@@ -229,11 +229,11 @@ define('TWOverflow/Farm/interface', [
      * Configura todos eventos dos elementos da interface.
      */
     var bindEvents = function () {
-        $hotkeys.add(Farm.settings.hotkeySwitch, function () {
+        angularHotkeys.add(Farm.settings.hotkeySwitch, function () {
             Farm.switch()
         })
 
-        $hotkeys.add(Farm.settings.hotkeyWindow, function () {
+        angularHotkeys.add(Farm.settings.hotkeyWindow, function () {
             ui.openWindow()
         })
 
@@ -317,7 +317,7 @@ define('TWOverflow/Farm/interface', [
         }
 
         $where[_populate ? 'append' : 'prepend'](eventElement)
-        
+
         // Recalcula o scrollbar apenas se a janela e
         // aba correta estiverem abertas.
         if (ui.isVisible('log')) {
@@ -393,7 +393,7 @@ define('TWOverflow/Farm/interface', [
                     value: id,
                     icon: groups[id].icon
                 })
-                
+
                 $groups[type].append($data)
             }
 
@@ -408,7 +408,7 @@ define('TWOverflow/Farm/interface', [
      */
     var updatePresetList = function () {
         var loaded = {}
-        var presets = $model.getPresetList().presets
+        var presets = modelDataService.getPresetList().presets
 
         var selectedPresetExists = false
         var selectedPreset = Farm.settings.presetName
@@ -492,7 +492,7 @@ define('TWOverflow/Farm/interface', [
 
     /**
      * Gera uma opção "desativada" padrão em um custom-select
-     * 
+     *
      * @param  {jqLite} $data - Elemento que armazenada o <span> com dataset.
      * @param {String=} _disabledValue - Valor da opção "desativada".
      */
@@ -506,7 +506,7 @@ define('TWOverflow/Farm/interface', [
 
     /**
      * Popula o dataset um elemento <span>
-     * 
+     *
      * @param  {jqLite} $data - Elemento que armazenada o <span> com dataset.
      * @param  {[type]} data - Dados a serem adicionados no dataset.
      */
@@ -521,7 +521,7 @@ define('TWOverflow/Farm/interface', [
     }
 
     function FarmInterface () {
-        groups = $model.getGroupList().getGroups()
+        groups = modelDataService.getGroupList().getGroups()
 
         disabled = Locale('farm', 'general.disabled')
 
@@ -579,7 +579,7 @@ define('TWOverflow/Farm/interface', [
 
         Farm.bind('nextVillage', function (next) {
             updateSelectedVillage()
-            
+
             if (!Farm.settings.eventVillageChange) {
                 return false
             }
@@ -611,7 +611,7 @@ define('TWOverflow/Farm/interface', [
             if (!Farm.settings.eventPriorityAdd) {
                 return false
             }
-            
+
             addEvent({
                 links: {
                     target: { type: 'village', name: genVillageLabel(target), id: target.id }
@@ -725,7 +725,7 @@ define('TWOverflow/Farm/interface', [
             opener.$elem.removeClass('btn-red').addClass('btn-green')
         })
 
-        if ($presetList.isLoaded()) {
+        if (modelDataService.getPresetList().isLoaded()) {
             updatePresetList()
         }
 

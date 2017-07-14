@@ -21,7 +21,7 @@ define('TWOverflow/Farm', [
 ) {
     /**
      * Previne do Farm ser executado mais de uma vez.
-     * 
+     *
      * @type {Boolean}
      */
     var initialized = false
@@ -69,7 +69,7 @@ define('TWOverflow/Farm', [
 
     /**
      * Lista de aldeias restantes até chegar o farm chegar à última
-     * aldeia da lista. Assim que chegar a lista será resetada com 
+     * aldeia da lista. Assim que chegar a lista será resetada com
      * todas aldeias dispoíveis do jogador (sem as waitingVillages).
      *
      * @type {Array}
@@ -82,7 +82,7 @@ define('TWOverflow/Farm', [
      * TODO:
      * Colocar esses valores em um modulo onde possa ser compartilhado
      * entre os outros modules e evite a repetição do mesmo.
-     * 
+     *
      * @type {String}
      */
     var dateFormat = 'HH:mm:ss dd/MM/yyyy'
@@ -291,7 +291,7 @@ define('TWOverflow/Farm', [
 
                 if (!included) {
                     return true
-                }   
+                }
             }
         },
 
@@ -349,7 +349,7 @@ define('TWOverflow/Farm', [
      * Atualiza o grupo de referência para ignorar aldeias e incluir alvos
      */
     var updateExceptionGroups = function () {
-        var groups = $model.getGroupList().getGroups()
+        var groups = modelDataService.getGroupList().getGroups()
 
         groupIgnore = Farm.settings.groupIgnore in groups
             ? groups[Farm.settings.groupIgnore]
@@ -368,7 +368,7 @@ define('TWOverflow/Farm', [
      * Atualiza a lista de aldeias ignoradas e incluidas
      */
     var updateExceptionVillages = function () {
-        var groupList = $model.getGroupList()
+        var groupList = modelDataService.getGroupList()
 
         ignoredVillages = []
         includedVillages = []
@@ -398,7 +398,7 @@ define('TWOverflow/Farm', [
             })
 
         if (groupOnly) {
-            var groupList = $model.getGroupList()
+            var groupList = modelDataService.getGroupList()
             var groupVillages = groupList.getGroupVillageIds(groupOnly.id)
 
             villages = villages.filter(function (village) {
@@ -466,10 +466,10 @@ define('TWOverflow/Farm', [
             }
         }
 
-        if ($presetList.isLoaded()) {
-            update($presetList.presets)
+        if (modelDataService.getPresetList().isLoaded()) {
+            update(modelDataService.getPresetList().getPresets())
         } else {
-            $socket.emit($route.GET_PRESETS, {}, function (data) {
+            socketService.emit(routeProvider.GET_PRESETS, {}, function (data) {
                 Farm.trigger('presetsLoaded')
                 update(data.presets)
             })
@@ -499,11 +499,11 @@ define('TWOverflow/Farm', [
 
             return true
         }
-        
+
         /**
          * Analisa a quantidade farmada dos relatórios e adiciona
          * a aldeia alvo na lista de prioridades.
-         * 
+         *
          * @param {Object} reportInfo - Informações básicas do relatório
          */
         var priorityHandler = function (reportInfo) {
@@ -560,7 +560,7 @@ define('TWOverflow/Farm', [
             }
 
             if (Farm.settings.priorityTargets && data.haul === 'full') {
-                if ($wms.isTemplateOpen('report')) {
+                if (windowManagerService.isTemplateOpen('report')) {
                     reportQueue.push(data)
                 } else {
                     priorityHandler(data)
@@ -570,12 +570,12 @@ define('TWOverflow/Farm', [
 
         /**
          * Executa handlers com delay.
-         * 
+         *
          * Alguns relatórios são adicionados na lista de espera
          * por que quando carregados, o relatório que o jogador
          * está visualizando no momento será substituido pelo
          * carregado.
-         * 
+         *
          * @param {Object} event - Dados do evento rootScope.$broadcast
          * @param {String} templateName - Nome do template da janela que
          *   foi fechado.
@@ -586,8 +586,8 @@ define('TWOverflow/Farm', [
             }
         }
 
-        $root.$on($eventType.REPORT_NEW, reportHandler)
-        $root.$on($eventType.WINDOW_CLOSED, delayedReportHandler)
+        rootScope.$on(eventTypeProvider.REPORT_NEW, reportHandler)
+        rootScope.$on(eventTypeProvider.WINDOW_CLOSED, delayedReportHandler)
     }
 
     /**
@@ -646,7 +646,7 @@ define('TWOverflow/Farm', [
             return false
         }
 
-        $root.$on($eventType.MESSAGE_SENT, remoteHandler)
+        rootScope.$on(eventTypeProvider.MESSAGE_SENT, remoteHandler)
     }
 
     /**
@@ -693,19 +693,19 @@ define('TWOverflow/Farm', [
             if (!groupInclude) {
                 return false
             }
-            
+
             if (groupInclude.id === data.group_id) {
                 villagesTargets = {}
             }
         }
 
-        $root.$on($eventType.ARMY_PRESET_UPDATE, updatePresetsHandler)
-        $root.$on($eventType.ARMY_PRESET_DELETED, updatePresetsHandler)
-        $root.$on($eventType.GROUPS_UPDATED, updateGroupsHandler)
-        $root.$on($eventType.GROUPS_CREATED, updateGroupsHandler)
-        $root.$on($eventType.GROUPS_DESTROYED, updateGroupsHandler)
-        $root.$on($eventType.GROUPS_VILLAGE_LINKED, updateGroupVillages)
-        $root.$on($eventType.GROUPS_VILLAGE_UNLINKED, updateGroupVillages)
+        rootScope.$on(eventTypeProvider.ARMY_PRESET_UPDATE, updatePresetsHandler)
+        rootScope.$on(eventTypeProvider.ARMY_PRESET_DELETED, updatePresetsHandler)
+        rootScope.$on(eventTypeProvider.GROUPS_UPDATED, updateGroupsHandler)
+        rootScope.$on(eventTypeProvider.GROUPS_CREATED, updateGroupsHandler)
+        rootScope.$on(eventTypeProvider.GROUPS_DESTROYED, updateGroupsHandler)
+        rootScope.$on(eventTypeProvider.GROUPS_VILLAGE_LINKED, updateGroupVillages)
+        rootScope.$on(eventTypeProvider.GROUPS_VILLAGE_UNLINKED, updateGroupVillages)
     }
 
     /**
@@ -761,8 +761,8 @@ define('TWOverflow/Farm', [
             }
         }
 
-        $root.$on($eventType.COMMAND_RETURNED, commandBackHandler)
-        $root.$on($eventType.RECONNECT, reconnectHandler)
+        rootScope.$on(eventTypeProvider.COMMAND_RETURNED, commandBackHandler)
+        rootScope.$on(eventTypeProvider.RECONNECT, reconnectHandler)
     }
 
     /**
@@ -829,7 +829,7 @@ define('TWOverflow/Farm', [
 
         Farm.bind('singleCycleNext', function () {
             currentStatus = 'singleCycleNext'
-            
+
             if (notifsEnabled && Farm.settings.singleCycleNotifs) {
                 var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
@@ -891,7 +891,7 @@ define('TWOverflow/Farm', [
      * @param {Function} callback
      */
     var assignPresets = function (presetIds, callback) {
-        $socket.emit($route.ASSIGN_PRESETS, {
+        socketService.emit(routeProvider.ASSIGN_PRESETS, {
             village_id: selectedVillage.id,
             preset_ids: presetIds
         }, callback)
@@ -907,7 +907,7 @@ define('TWOverflow/Farm', [
             return false
         }
 
-        $socket.emit($route.GROUPS_LINK_VILLAGE, {
+        socketService.emit(routeProvider.GROUPS_LINK_VILLAGE, {
             group_id: groupIgnore.id,
             village_id: target.id
         }, function () {
@@ -947,7 +947,7 @@ define('TWOverflow/Farm', [
      * Verifica se o último ataque efetuado pelo FarmOverflow
      * já passou do tempo determinado, para que assim tente
      * reiniciar os ataques novamente.
-     * 
+     *
      * Isso é necessário pois o jogo não responde os .emits
      * de sockets para enviar os ataques, fazendo com que o
      * farm fique travado em estado "Iniciado".
@@ -982,12 +982,12 @@ define('TWOverflow/Farm', [
 
     /**
      * Carrega os dados de um relatório.
-     * 
+     *
      * @param {Number} reportId - ID do relatório
-     * @param {Function} callback 
+     * @param {Function} callback
      */
     var getReport = function (reportId, callback) {
-        $socket.emit($route.REPORT_GET, {
+        socketService.emit(routeProvider.REPORT_GET, {
             id: reportId
         }, callback)
     }
@@ -999,7 +999,7 @@ define('TWOverflow/Farm', [
      * @param  {String} message - Corpo da mensagem.
      */
     var sendMessageReply = function (message_id, message) {
-        $socket.emit($route.MESSAGE_REPLY, {
+        socketService.emit(routeProvider.MESSAGE_REPLY, {
             message_id: message_id,
             message: message
         })
@@ -1060,7 +1060,7 @@ define('TWOverflow/Farm', [
 
     /**
      * Obtem a lista de aldeias disponíveis para atacar
-     * 
+     *
      * @return {Array} Lista de aldeias disponíveis.
      */
     var getFreeVillages = function () {
@@ -1085,7 +1085,7 @@ define('TWOverflow/Farm', [
 
         /**
          * Configurações salvas localmente
-         * 
+         *
          * @type {Object}
          */
         var localSettings = Lockr.get('farm-settings', {}, true)
@@ -1129,7 +1129,7 @@ define('TWOverflow/Farm', [
         lastAttack = Lockr.get('farm-lastAttack', -1, true)
         targetIndexes = Lockr.get('farm-indexes', {}, true)
 
-        $player = $model.getSelectedCharacter()
+        $player = modelDataService.getSelectedCharacter()
 
         updateExceptionGroups()
         updateExceptionVillages()
@@ -1146,7 +1146,7 @@ define('TWOverflow/Farm', [
         // É disparado quando o método $mapData.loadTownDataAsync
         // é executado.
         $mapData.setRequestFn(function (args) {
-            $socket.emit($route.MAP_GETVILLAGES, args)
+            socketService.emit(routeProvider.MAP_GETVILLAGES, args)
         })
 
         Locale.change('farm', Farm.settings.language)
@@ -1170,7 +1170,7 @@ define('TWOverflow/Farm', [
             if (notifsEnabled) {
                 emitNotif('error', Locale('farm', 'events.noSelectedVillage'))
             }
-            
+
             return false
         }
 
@@ -1318,7 +1318,7 @@ define('TWOverflow/Farm', [
         Farm.trigger('settingsChange', [modify])
     }
 
-    /** 
+    /**
      * Seleciona o próximo alvo da aldeia.
      *
      * @param [_selectOnly] Apenas seleciona o alvo sem pular para o próximo.
@@ -1453,7 +1453,7 @@ define('TWOverflow/Farm', [
                 })
             }
 
-            return 
+            return
         }
 
         var loop = function () {
@@ -1653,9 +1653,9 @@ define('TWOverflow/Farm', [
 
             return false
         }
-        
+
         var vid = selectedVillage.id
-        var villagePresets = $presetList.getPresetsByVillageId(vid)
+        var villagePresets = modelDataService.getPresetList().getPresetsByVillageId(vid)
         var needAssign = false
         var which = []
 
@@ -1874,7 +1874,7 @@ define('TWOverflow/Farm', [
      */
     Farm.createCommander = function () {
         var Commander = require('TWOverflow/Farm/Commander')
-        
+
         return new Commander()
     }
 

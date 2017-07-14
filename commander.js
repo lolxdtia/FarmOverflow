@@ -18,7 +18,7 @@ define('TWOverflow/Farm/Commander', [
 
         /**
          * ID do timeout usado no intervalo entre cada ataque.
-         * Utilizado para quando o FarmOverflow for parado 
+         * Utilizado para quando o FarmOverflow for parado
          * manualmente, os comandos com delay sejam parados
          * também.
          *
@@ -38,7 +38,7 @@ define('TWOverflow/Farm/Commander', [
 
     Commander.prototype.analyse = function () {
         var self = this
-        
+
         if (!self.running) {
             return
         }
@@ -134,7 +134,7 @@ define('TWOverflow/Farm/Commander', [
         case 'noUnits':
             Farm.trigger('noUnits', [selectedVillage])
             Farm.setWaitingVillages(sid)
-            
+
             if (Farm.isSingleVillage()) {
                 if (selectedVillage.countCommands() === 0) {
                     Farm.trigger('noUnitsNoCommands')
@@ -251,7 +251,7 @@ define('TWOverflow/Farm/Commander', [
      */
     Commander.prototype.checkPresetTime = function (preset) {
         var selectedTarget = Farm.getSelectedTarget()
-        var travelTime = $armyService.calculateTravelTime(preset, {
+        var travelTime = armyService.calculateTravelTime(preset, {
             barbarian: !selectedTarget.pid,
             officers: false
         })
@@ -264,7 +264,7 @@ define('TWOverflow/Farm/Commander', [
 
         var distance = $math.actualDistance(villagePosition, targetPosition)
 
-        var totalTravelTime = $armyService.getTravelTimeForDistance(
+        var totalTravelTime = armyService.getTravelTimeForDistance(
             preset,
             travelTime,
             distance,
@@ -288,7 +288,7 @@ define('TWOverflow/Farm/Commander', [
             return false
         }
 
-        var self = this        
+        var self = this
         var unbindError
         var unbindSend
         var selectedVillage = Farm.getSelectedVillage()
@@ -312,7 +312,7 @@ define('TWOverflow/Farm/Commander', [
             Farm.nextTarget()
 
             var interval
-            
+
             // Intervalo mínimo de 1 segundo para que o jogo registre as
             // alterações das unidades no objeto local da aldeia.
             interval = randomSeconds(Farm.settings.randomBase)
@@ -329,7 +329,7 @@ define('TWOverflow/Farm/Commander', [
             Farm.updateActivity()
         })
 
-        $socket.emit($route.SEND_PRESET, {
+        socketService.emit(routeProvider.SEND_PRESET, {
             start_village: selectedVillage.id,
             target_village: Farm.getSelectedTarget().id,
             army_preset_id: preset.id,
@@ -345,8 +345,8 @@ define('TWOverflow/Farm/Commander', [
     Commander.prototype.onCommandSend = function (callback) {
         var selectedVillage = Farm.getSelectedVillage()
         var before = angular.copy(selectedVillage.units)
-        
-        var unbind = $root.$on($eventType.VILLAGE_UNIT_INFO, function (event, data) {
+
+        var unbind = rootScope.$on(eventTypeProvider.VILLAGE_UNIT_INFO, function (event, data) {
             if (selectedVillage.id !== data.village_id) {
                 return false
             }
@@ -374,7 +374,7 @@ define('TWOverflow/Farm/Commander', [
      * Chamado após a ocorrer um erro ao tentar enviar um comando.
      */
     Commander.prototype.onCommandError = function (callback) {
-        var unbind = $root.$on($eventType.MESSAGE_ERROR, function (event, data) {
+        var unbind = rootScope.$on(eventTypeProvider.MESSAGE_ERROR, function (event, data) {
             if (!data.cause || !data.code) {
                 return false
             }
@@ -404,7 +404,7 @@ define('TWOverflow/Farm/Commander', [
      */
     Commander.prototype.simulate = function (callback) {
         var attackingFactor = function () {
-            $socket.emit($route.GET_ATTACKING_FACTOR, {
+            socketService.emit(routeProvider.GET_ATTACKING_FACTOR, {
                 target_id: Farm.getSelectedTarget().id
             })
         }

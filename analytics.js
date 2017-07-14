@@ -5,7 +5,7 @@ define('TWOverflow/Farm/analytics', [
     Farm.analytics = function (trackId) {
         ga('create', '___farmAnalytics', 'auto', 'TWOverflowFarm')
 
-        var player = $model.getPlayer()
+        var player = modelDataService.getPlayer()
         var character = player.getSelectedCharacter()
         var data = []
 
@@ -24,7 +24,7 @@ define('TWOverflow/Farm/analytics', [
         Farm.bind('ignoredVillage', function () {
             ga('TWOverflowFarm.send', 'event', 'commands', 'ignoreTarget')
         })
-        
+
         Farm.bind('priorityTargetAdded', function () {
             ga('TWOverflowFarm.send', 'event', 'commands', 'priorityTarget')
         })
