@@ -973,7 +973,7 @@ define('TWOverflow/Farm', [
                 if (passedTime > toleranceTime) {
                     disableNotifs(function () {
                         Farm.stop()
-                        Farm.start()
+                        Farm.start(true /*autoInit*/)
                     })
                 }
             }
@@ -1157,9 +1157,9 @@ define('TWOverflow/Farm', [
      *
      * @return {Boolean}
      */
-    Farm.start = function () {
+    Farm.start = function (autoInit) {
         if (!selectedPresets.length) {
-            if (notifsEnabled) {
+            if (!autoInit && notifsEnabled) {
                 emitNotif('error', Locale('farm', 'events.presetFirst'))
             }
 
@@ -1167,7 +1167,7 @@ define('TWOverflow/Farm', [
         }
 
         if (!selectedVillage) {
-            if (notifsEnabled) {
+            if (!autoInit && notifsEnabled) {
                 emitNotif('error', Locale('farm', 'events.noSelectedVillage'))
             }
 
@@ -1180,7 +1180,7 @@ define('TWOverflow/Farm', [
         }
 
         if (Farm.settings.singleCycle) {
-            Farm.cycle.start()
+            Farm.cycle.start(autoInit)
         } else {
             initNormalCycle()
         }
