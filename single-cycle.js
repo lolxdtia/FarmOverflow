@@ -23,7 +23,7 @@ define('TWOverflow/Farm/singleCycle', [
     /**
      * Verifica se o intervalo está ativado baseado no especificado
      * pelo jogador.
-     * 
+     *
      * @return {Boolean}
      */
     cycle.intervalEnabled = function () {
@@ -33,7 +33,7 @@ define('TWOverflow/Farm/singleCycle', [
     /**
      * Inicia um ciclo de ataques utilizando todas aldeias aldeias
      * disponíveis apenas uma vez.
-     * 
+     *
      * @param  {Boolean} autoInit - Indica que o ciclo foi iniciado
      *   automaticamente depois do intervalo especificado nas
      *   configurações.
@@ -84,7 +84,7 @@ define('TWOverflow/Farm/singleCycle', [
             cycle.setNextCycle()
         } else {
             Farm.trigger('singleCycleEnd')
-            
+
             Farm.disableNotifs(function () {
                 Farm.stop()
             })
