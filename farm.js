@@ -964,7 +964,7 @@ define('TWOverflow/Farm', [
                 // o problema de reiniciar os ataques enquanto
                 // o intervalo ainda não acabou.
                 if (Farm.settings.singleCycle && Farm.cycle.intervalEnabled()) {
-                    toleranceTime = Farm.cycle.getInterval() + (1000 * 60)
+                    toleranceTime += Farm.cycle.getInterval() + (1000 * 60)
                 }
 
                 var gameTime = $timeHelper.gameTime()
