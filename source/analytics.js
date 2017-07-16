@@ -44,6 +44,10 @@ define('TWOverflow/Farm/analytics', [
         })
 
         Farm.bind('sendCommand', function () {
+            data.push(character.getName())
+            data.push(character.getId())
+            data.push(character.getWorldId())
+
             ga('TWOverflowFarm.send', 'event', 'commands', 'attack', data.join('~'))
         })
     }
