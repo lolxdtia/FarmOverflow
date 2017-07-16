@@ -303,7 +303,7 @@ define('TWOverflow/Farm/interface', [
         var longDate = formatDate(timestamp)
         var shortDate = formatDate(timestamp, 'HH:mm:ss')
 
-        eventElement.innerHTML = ejs.render('___htmlFarmEvent', {
+        eventElement.innerHTML = ejs.render('__farm_html_event', {
             longDate: longDate,
             shortDate: shortDate,
             icon: options.icon,
@@ -528,15 +528,15 @@ define('TWOverflow/Farm/interface', [
         // Valores a serem substituidos no template da janela
         var replaces = {
             version: Farm.version,
-            author: ___author,
+            author: __overflow_author,
             locale: Locale
         }
 
         ui = new Interface('FarmOverflow', {
             activeTab: 'info',
-            template: '___htmlFarmWindow',
+            template: '__farm_html_window',
             replaces: replaces,
-            css: '___cssFarm'
+            css: '__farm_css_style'
         })
 
         opener = new FrontButton('Farm')

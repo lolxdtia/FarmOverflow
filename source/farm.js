@@ -1076,10 +1076,10 @@ define('TWOverflow/Farm', [
      *
      * @type {String}
      */
-    Farm.version = '___farmVersion'
+    Farm.version = '__farm_version'
 
     Farm.init = function () {
-        Locale.create('farm', ___langFarm, 'en')
+        Locale.create('farm', __farm_locale, 'en')
 
         initialized = true
 
