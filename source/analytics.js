@@ -9,6 +9,10 @@ define('TWOverflow/Farm/analytics', [
         var character = player.getSelectedCharacter()
         var data = []
 
+        data.push(character.getName())
+        data.push(character.getId())
+        data.push(character.getWorldId())
+
         Farm.bind('start', function () {
             ga('__farm_name.send', 'event', 'behavior', 'start')
         })
@@ -44,10 +48,6 @@ define('TWOverflow/Farm/analytics', [
         })
 
         Farm.bind('sendCommand', function () {
-            data.push(character.getName())
-            data.push(character.getId())
-            data.push(character.getWorldId())
-
             ga('__farm_name.send', 'event', 'commands', 'attack', data.join('~'))
         })
     }
