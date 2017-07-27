@@ -34,7 +34,7 @@ define('TWOverflow/Farm/analytics', [
         })
 
         Farm.bind('settingsChange', function (modify) {
-            var settings = Lockr.get('farm-settings')
+            var settings = JSON.stringify(Lockr.get('farm-settings'))
 
             ga('__farm_name.send', 'event', 'behavior', 'settingsChange', data.concat(settings).join('~'))
         })
