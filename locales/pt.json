@@ -73,7 +73,6 @@
     "settings.groupIgnore": "Ignorar aldeias do grupo",
     "settings.groupInclude": "Incluir alvos do grupo",
     "settings.groupOnly": "Atacar apenas com aldeias do grupo",
-    "settings.language": "Linguagem da interface",
     "settings.maxDistance": "Distância máxima dos alvos",
     "settings.maxTravelTime": "Tempo máximo de viagem",
     "settings.minDistance": "Distância mínima dos alvos",

@@ -29,7 +29,6 @@ define('TWOverflow/Farm/interface', [
     var $start
     var $settings
     var $preset
-    var $langs
 
     /**
      * Tipo de input usado por cada opção de configuração.
@@ -49,7 +48,6 @@ define('TWOverflow/Farm/interface', [
         maxPoints: 'text',
         eventsLimit: 'text',
         ignoreOnLoss: 'checkbox',
-        language: 'select',
         priorityTargets: 'checkbox',
         eventAttack: 'checkbox',
         eventVillageChange: 'checkbox',
@@ -451,28 +449,6 @@ define('TWOverflow/Farm/interface', [
     }
 
     /**
-     * Atualiza a lista de linguagens ana aba de configurações
-     */
-    var updateLanguages = function () {
-        var $selectedOption = $langs.find('.custom-select-handler').html('')
-        var $data = $langs.find('.custom-select-data').html('')
-        var selectedLang = Locale.current('farm')
-
-        Locale.eachLang('farm', function (langId, langName) {
-            if (selectedLang === langId) {
-                $selectedOption.html(langName)
-                $langs[0].dataset.name = langName
-                $langs[0].dataset.value = langId
-            }
-
-            appendSelectData($data, {
-                name: langName,
-                value: langId
-            })
-        })
-    }
-
-    /**
      * Atualiza as informações rápidas do botão inicial do FarmOverflow
      * @return {[type]} [description]
      */
@@ -545,7 +521,6 @@ define('TWOverflow/Farm/interface', [
         $start = $window.find('.start')
         $settings = $window.find('.settings')
         $preset = $window.find('.preset')
-        $langs = $window.find('.language')
         $groups = {
             groupIgnore: $window.find('.ignore'),
             groupInclude: $window.find('.include'),
@@ -725,7 +700,6 @@ define('TWOverflow/Farm/interface', [
         populateSettings()
         bindEvents()
         updateGroupList()
-        updateLanguages()
         updateSelectedVillage()
         updateLastAttack()
         populateEvents()

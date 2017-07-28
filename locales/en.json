@@ -73,7 +73,6 @@
     "settings.groupIgnore":"Ignore villages from group",
     "settings.groupInclude":"Include targets from group",
     "settings.groupOnly":"Attack only with villages from group",
-    "settings.language":"Interface language",
     "settings.maxDistance":"Targets maximum distance",
     "settings.maxTravelTime":"Maximum travel time (going)",
     "settings.minDistance":"Targets minimum distance",

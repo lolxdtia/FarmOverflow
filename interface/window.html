@@ -321,19 +321,6 @@
                             <td><#= locale("farm", "settings.hotkeyWindow") #></td>
                             <td><input data-setting="hotkeyWindow" type="text" class="textfield-border"></td>
                         </tr>
-                        <tr>
-                            <td>
-                                <span class="icon-34x34-general"></span>
-                                <span class="ff-cell-fix"><#= locale("farm", "settings.language") #></span>
-                            </td>
-                            <td>
-                                <select data-setting="language" class="language">
-                                    <# locale.eachLang("farm", function(id, name) { #>
-                                        <option value="<#= id #>"><#= name #></option>
-                                    <# }) #>
-                                </select>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </form>

@@ -1095,7 +1095,6 @@ define('TWOverflow/Farm', [
             maxPoints: 12500,
             eventsLimit: 20,
             ignoreOnLoss: true,
-            language: gameLocale.LANGUAGE.split('_')[0],
             priorityTargets: true,
             eventAttack: true,
             eventVillageChange: true,
@@ -1135,8 +1134,6 @@ define('TWOverflow/Farm', [
         $mapData.setRequestFn(function (args) {
             socketService.emit(routeProvider.MAP_GETVILLAGES, args)
         })
-
-        Locale.change('farm', Farm.settings.language)
     }
 
     /**
@@ -1240,7 +1237,6 @@ define('TWOverflow/Farm', [
             eventVillageChange: ['events'],
             eventPriorityAdd: ['events'],
             eventIgnoredVillage: ['events'],
-            language: ['language'],
             singleCycle: ['villages']
         }
 
@@ -1285,12 +1281,6 @@ define('TWOverflow/Farm', [
 
         if (modify.events) {
             Farm.trigger('resetEvents')
-        }
-
-        if (modify.language) {
-            if (eventsEnabled) {
-                emitNotif('success', Locale('farm', 'settings.events.restartScript'))
-            }
         }
 
         if (Farm.commander.running) {
