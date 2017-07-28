@@ -68,7 +68,7 @@
     "info.remote8":"If you don't receive the message \"OK\" in return, means that the FarmOverflow did not receive the message or the command was invalid.",
     "info.remote9":"Attention: Works only if you are the only participant in the message!",
     "info.remote10":"You can use the same message to execute other commands, just reply the message.",
-    "settings.basicSettings":"Basic Settings",
+    "settings.basicSettings":"Basic settings",
     "settings.eventsLimit":"Maximum length of task logs",
     "settings.groupIgnore":"Ignore villages from group",
     "settings.groupInclude":"Include targets from group",

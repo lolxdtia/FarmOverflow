@@ -68,7 +68,7 @@
     "info.remote8": "Se você não receber uma mensagem de OK em retorno, quer dizer que o FarmOverflow não recebeu a mensagem ou que um comando inválido foi usado.",
     "info.remote9": "Atenção: Só funciona se você for o único participante da mensagem!",
     "info.remote10": "Você pode usar a mesma mensagem para executar outros comandos, bastando responde-la.",
-    "settings.basicSettings": "Configurações Básicas",
+    "settings.basicSettings": "Configurações básicas",
     "settings.eventsLimit": "Número máximo de registros",
     "settings.groupIgnore": "Ignorar aldeias do grupo",
     "settings.groupInclude": "Incluir alvos do grupo",
