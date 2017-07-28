@@ -77,17 +77,6 @@ define('TWOverflow/Farm', [
     var leftVillages = []
 
     /**
-     * Formato das datas usadas nos eventos.
-     *
-     * TODO:
-     * Colocar esses valores em um modulo onde possa ser compartilhado
-     * entre os outros modules e evite a repetição do mesmo.
-     *
-     * @type {String}
-     */
-    var dateFormat = 'HH:mm:ss dd/MM/yyyy'
-
-    /**
      * Aldeia atualmente selecionada.
      *
      * @type {Object} VillageModel

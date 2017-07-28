@@ -90,13 +90,6 @@ define('TWOverflow/Farm/interface', [
     }
 
     /**
-     * Formato das datas usadas nos eventos.
-     *
-     * @type {String}
-     */
-    var dateFormat = 'HH:mm:ss dd/MM/yyyy'
-
-    /**
      * Tradução de "desativado" para a linguagem selecionada.
      *
      * @type {String}
