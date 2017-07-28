@@ -721,8 +721,6 @@ define('TWOverflow/Farm', [
                     }
 
                     if (Farm.commander.running) {
-                        // TODO:
-                        // é certo selecionar a aldeia a partir daqui?
                         selectVillage(vid)
 
                         setTimeout(function () {
