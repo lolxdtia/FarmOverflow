@@ -539,7 +539,7 @@ define('TWOverflow/Farm', [
          * @param  {Object} data - Dados do relatório recebido.
          */
         var reportHandler = function (event, data) {
-            if (data.type !== 'attack') {
+            if (!Farm.commander.running || data.type !== 'attack') {
                 return false
             }
 
