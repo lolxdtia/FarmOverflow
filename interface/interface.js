@@ -31,38 +31,6 @@ define('TWOverflow/Farm/interface', [
     var $preset
 
     /**
-     * Tipo de input usado por cada opção de configuração.
-     *
-     * @type {Object}
-     */
-    var settingsMap = {
-        maxDistance: 'text',
-        minDistance: 'text',
-        maxTravelTime: 'text',
-        randomBase: 'text',
-        presetName: 'select',
-        groupIgnore: 'select',
-        groupInclude: 'select',
-        groupOnly: 'select',
-        minPoints: 'text',
-        maxPoints: 'text',
-        eventsLimit: 'text',
-        ignoreOnLoss: 'checkbox',
-        priorityTargets: 'checkbox',
-        eventAttack: 'checkbox',
-        eventVillageChange: 'checkbox',
-        eventPriorityAdd: 'checkbox',
-        eventIgnoredVillage: 'checkbox',
-        remoteId: 'text',
-        hotkeySwitch: 'text',
-        hotkeyWindow: 'text',
-        singleCycle: 'checkbox',
-        singleCycleNotifs: 'checkbox',
-        singleCycleInterval: 'text',
-        maxAttacksPerVillage: 'text'
-    }
-
-    /**
      * Contagem de eventos inseridos na visualização.
      *
      * @type {Number}
@@ -126,7 +94,7 @@ define('TWOverflow/Farm/interface', [
         var newSettings = {}
 
         eachSetting(function ($input, settingId) {
-            var inputType = settingsMap[settingId]
+            var inputType = Farm.settingsMap[settingId].inputType
 
             switch (inputType) {
             case 'text':
@@ -158,7 +126,7 @@ define('TWOverflow/Farm/interface', [
      */
     var populateSettings = function () {
         eachSetting(function ($input, settingId) {
-            var inputType = settingsMap[settingId]
+            var inputType = Farm.settingsMap[settingId].inputType
 
             switch (inputType) {
             case 'text':

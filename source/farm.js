@@ -1078,36 +1078,145 @@ define('TWOverflow/Farm', [
         var localSettings = Lockr.get('farm-settings', {}, true)
 
         /**
+         * Informações de cada opção.
+         *
+         * @type {Object}
+         */
+        Farm.settingsMap = {
+            maxDistance: {
+                default: 10,
+                updates: ['targets'],
+                inputType: 'text'
+            },
+            minDistance: {
+                default: 0,
+                updates: ['targets'],
+                inputType: 'text'
+            },
+            maxTravelTime: {
+                default: '01:00:00',
+                updates: [],
+                inputType: 'text'
+            },
+            randomBase: {
+                default: 3,
+                updates: [],
+                inputType: 'text'
+            },
+            presetName: {
+                default: '',
+                updates: ['preset'],
+                inputType: 'select'
+            },
+            groupIgnore: {
+                default: 0,
+                updates: ['groups'],
+                inputType: 'select'
+            },
+            groupInclude: {
+                default: 0,
+                updates: ['groups', 'targets'],
+                inputType: 'select'
+            },
+            groupOnly: {
+                default: 0,
+                updates: ['groups', 'villages', 'targets'],
+                inputType: 'select'
+            },
+            minPoints: {
+                default: 0,
+                updates: ['targets'],
+                inputType: 'text'
+            },
+            maxPoints: {
+                default: 12500,
+                updates: ['targets'],
+                inputType: 'text'
+            },
+            eventsLimit: {
+                default: 20,
+                updates: ['events'],
+                inputType: 'text'
+            },
+            ignoreOnLoss: {
+                default: true,
+                updates: [],
+                inputType: 'checkbox'
+            },
+            priorityTargets: {
+                default: true,
+                updates: [],
+                inputType: 'checkbox'
+            },
+            eventAttack: {
+                default: true,
+                updates: ['events'],
+                inputType: 'checkbox'
+            },
+            eventVillageChange: {
+                default: true,
+                updates: ['events'],
+                inputType: 'checkbox'
+            },
+            eventPriorityAdd: {
+                default: true,
+                updates: ['events'],
+                inputType: 'checkbox'
+            },
+            eventIgnoredVillage: {
+                default: true,
+                updates: ['events'],
+                inputType: 'checkbox'
+            },
+            remoteId: {
+                default: 'remote',
+                updates: [],
+                inputType: 'text'
+            },
+            hotkeySwitch: {
+                default: 'shift+z',
+                updates: [],
+                inputType: 'text'
+            },
+            hotkeyWindow: {
+                default: 'z',
+                updates: [],
+                inputType: 'text'
+            },
+            singleCycle: {
+                default: false,
+                updates: ['villages'],
+                inputType: 'checkbox'
+            },
+            singleCycleNotifs: {
+                default: false,
+                updates: [],
+                inputType: 'checkbox'
+            },
+            singleCycleInterval: {
+                default: '00:00:00',
+                updates: [],
+                inputType: 'text'
+            },
+            maxAttacksPerVillage: {
+                default: 48,
+                updates: [],
+                inputType: 'text'
+            }
+        }
+
+        /**
          * Configurações do jogador + configurações padrões
          *
          * @type {Object}
          */
-        Farm.settings = angular.merge({}, {
-            maxDistance: 10,
-            minDistance: 0,
-            maxTravelTime: '01:00:00',
-            randomBase: 3, // segundos
-            presetName: '',
-            groupIgnore: 0,
-            groupInclude: 0,
-            groupOnly: 0,
-            minPoints: 0,
-            maxPoints: 12500,
-            eventsLimit: 20,
-            ignoreOnLoss: true,
-            priorityTargets: true,
-            eventAttack: true,
-            eventVillageChange: true,
-            eventPriorityAdd: true,
-            eventIgnoredVillage: true,
-            remoteId: 'remote',
-            hotkeySwitch: 'shift+z',
-            hotkeyWindow: 'z',
-            singleCycle: false,
-            singleCycleNotifs: false,
-            singleCycleInterval: '00:00:00',
-            maxAttacksPerVillage: 48
-        }, localSettings)
+        Farm.settings = {}
+
+        for (var key in Farm.settingsMap) {
+            var defaultValue = Farm.settingsMap[key].default
+
+            Farm.settings[key] = localSettings[key] || defaultValue
+        }
 
         Farm.commander = Farm.createCommander()
 
@@ -1222,30 +1331,11 @@ define('TWOverflow/Farm', [
     Farm.updateSettings = function (changes) {
         var modify = {}
 
-        // Valores que precisam ser resetados/modificados quando
-        // configuração x é alterada.
-        var updates = {
-            groupIgnore: ['groups'],
-            groupInclude: ['groups', 'targets'],
-            groupOnly: ['groups', 'villages', 'targets'],
-            presetName: ['preset'],
-            minDistance: ['targets'],
-            maxDistance: ['targets'],
-            minPoints: ['targets'],
-            maxPoints: ['targets'],
-            eventsLimit: ['events'],
-            eventAttack: ['events'],
-            eventVillageChange: ['events'],
-            eventPriorityAdd: ['events'],
-            eventIgnoredVillage: ['events'],
-            singleCycle: ['villages']
-        }
-
         for (var key in changes) {
             if (changes[key] !== Farm.settings[key]) {
-                var modifyKeys = updates[key]
+                var modifyKeys = Farm.settingsMap[key].updates
 
-                if (updates.hasOwnProperty(key)) {
+                if (Farm.settingsMap.hasOwnProperty(key)) {
                     for (var i = 0; i < modifyKeys.length; i++) {
                         modify[modifyKeys[i]] = true
                     }
