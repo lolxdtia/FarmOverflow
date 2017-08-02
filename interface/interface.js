@@ -58,7 +58,8 @@ define('TWOverflow/Farm/interface', [
         hotkeyWindow: 'text',
         singleCycle: 'checkbox',
         singleCycleNotifs: 'checkbox',
-        singleCycleInterval: 'text'
+        singleCycleInterval: 'text',
+        maxAttacksPerVillage: 'text'
     }
 
     /**
@@ -326,7 +327,7 @@ define('TWOverflow/Farm/interface', [
         var selectedVillage = Farm.getSelectedVillage()
 
         if (!selectedVillage) {
-            return $selected.html(Locale('farm', 'general.none'))
+            return $selected.html(Locale('common', 'none'))
         }
 
         var village = buttonLink('village', genVillageLabel(selectedVillage), selectedVillage.id)
@@ -595,7 +596,7 @@ define('TWOverflow/Farm/interface', [
                 type: 'noPreset'
             })
 
-            $status.html(Locale('farm', 'events.paused'))
+            $status.html(Locale('common', 'paused'))
         })
 
         Farm.bind('noUnits', function () {
@@ -613,7 +614,7 @@ define('TWOverflow/Farm/interface', [
         })
 
         Farm.bind('pause', function () {
-            $status.html(Locale('farm', 'events.paused'))
+            $status.html(Locale('common', 'paused'))
         })
 
         Farm.bind('noVillages', function () {
@@ -682,13 +683,13 @@ define('TWOverflow/Farm/interface', [
         })
 
         Farm.bind('start', function () {
-            $start.html(Locale('farm', 'general.pause'))
+            $start.html(Locale('common', 'pause'))
             $start.removeClass('btn-green').addClass('btn-red')
             opener.$elem.removeClass('btn-green').addClass('btn-red')
         })
 
         Farm.bind('pause', function () {
-            $start.html(Locale('farm', 'general.start'))
+            $start.html(Locale('common', 'start'))
             $start.removeClass('btn-red').addClass('btn-green')
             opener.$elem.removeClass('btn-red').addClass('btn-green')
         })

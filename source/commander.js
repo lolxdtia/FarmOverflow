@@ -97,7 +97,7 @@ define('TWOverflow/Farm/Commander', [
         }
 
         Farm.checkPresets(function () {
-            if (selectedVillage.countCommands() >= 48) {
+            if (selectedVillage.countCommands() >= Farm.settings.maxAttacksPerVillage) {
                 return self.handleError('commandLimit')
             }
 

@@ -998,7 +998,7 @@ define('TWOverflow/Farm', [
      * @return {String}
      */
     var genStatusReply = function () {
-        var localeStatus = Locale('farm', 'events.status')
+        var localeStatus = Locale('common', 'status')
         var localeVillage = Locale('farm', 'events.selectedVillage')
         var localeLast = Locale('farm', 'events.lastAttack')
 
@@ -1105,7 +1105,8 @@ define('TWOverflow/Farm', [
             hotkeyWindow: 'z',
             singleCycle: false,
             singleCycleNotifs: false,
-            singleCycleInterval: '00:00:00'
+            singleCycleInterval: '00:00:00',
+            maxAttacksPerVillage: 48
         }, localSettings)
 
         Farm.commander = Farm.createCommander()
@@ -1187,7 +1188,7 @@ define('TWOverflow/Farm', [
         Farm.trigger('pause')
 
         if (notifsEnabled) {
-            emitNotif('success', Locale('farm', 'general.paused'))
+            emitNotif('success', Locale('common', 'paused'))
         }
 
         return true

@@ -12,17 +12,17 @@
             <div class="tabs-three-col">
                 <div class="tab" tab="info">
                     <div class="tab-inner">
-                        <div><a href="#" class="btn-icon btn-orange"><#= locale("farm", "general.info") #></a></div>
+                        <div><a href="#" class="btn-icon btn-orange"><#= locale("common", "info") #></a></div>
                     </div>
                 </div>
                 <div class="tab" tab="settings">
                     <div class="tab-inner">
-                        <div><a href="#" class="btn-icon btn-orange"><#= locale("farm", "general.settings") #></a></div>
+                        <div><a href="#" class="btn-icon btn-orange"><#= locale("common", "settings") #></a></div>
                     </div>
                 </div>
                 <div class="tab" tab="log">
                     <div class="tab-inner">
-                        <div><a href="#" class="btn-icon btn-orange"><#= locale("farm", "general.events") #></a></div>
+                        <div><a href="#" class="btn-icon btn-orange"><#= locale("common", "registers") #></a></div>
                     </div>
                 </div>
             </div>
@@ -141,6 +141,14 @@
                             </td>
                         </tr>
                         <tr>
+                            <td tooltip="<#= locale("farm", "tooltip.maxAttacksPerVillage") #>">
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.maxAttacksPerVillage") #></span>
+                            </td>
+                            <td>
+                                <input data-setting="maxAttacksPerVillage" type="number" class="textfield-border" min="0" max="50" required>
+                            </td>
+                        </tr>
+                        <tr>
                             <td tooltip="<#= locale("farm", "tooltip.priorityTargets") #>">
                                 <span class="icon-34x34-name_changed"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.priorityTargets") #></span>
@@ -200,7 +208,7 @@
                     </tbody>
                 </table>
 
-                <h5 class="twx-section collapse"><#= locale("farm", "settings.filters") #></h5>
+                <h5 class="twx-section collapse"><#= locale("common", "filters") #></h5>
                 <table class="tbl-border-light tbl-striped">
                     <colgroup>
                         <col width="50%">
@@ -245,7 +253,7 @@
                     </tbody>
                 </table>
 
-                <h5 class="twx-section collapse"><#= locale("farm", "settings.events") #></h5>
+                <h5 class="twx-section collapse"><#= locale("common", "registers") #></h5>
                 <table class="tbl-border-light tbl-striped">
                     <colgroup>
                         <col width="50%">
@@ -295,7 +303,7 @@
                     </tbody>
                 </table>
 
-                <h5 class="twx-section collapse"><#= locale("farm", "settings.others") #></h5>
+                <h5 class="twx-section collapse"><#= locale("common", "others") #></h5>
                 <table class="tbl-border-light tbl-striped">
                     <colgroup>
                         <col width="50%">
@@ -325,7 +333,7 @@
         <!-- EVENTOS -->
         <div class="box-paper footer has-footer-upper twOverflow-content-log">
             <div class="screen-tribe-news rich-text">
-                <h5 class="twx-section collapse"><#= locale("farm", "events.status") #></h5>
+                <h5 class="twx-section collapse"><#= locale("common", "status") #></h5>
                 <table class="tbl-border-light tbl-news tbl-big-header">
                     <colgroup>
                         <col width="135px">
@@ -333,7 +341,7 @@
                     </colgroup>
                     <tbody>
                         <tr class="list-item">
-                            <td class="status" colspan="2" class="cell-center"><#= locale("farm", "events.paused") #></td>
+                            <td class="status" colspan="2" class="cell-center"><#= locale("common", "paused") #></td>
                         </tr>
                         <tr class="reduced">
                             <td><#= locale("farm", "events.selectedVillage") #></td>
@@ -341,12 +349,12 @@
                         </tr>
                         <tr class="reduced">
                             <td><#= locale("farm", "events.lastAttack") #></td>
-                            <td class="last"><#= locale("farm", "general.none") #></td>
+                            <td class="last"><#= locale("common", "none") #></td>
                         </tr>
                     </tbody>
                 </table>
 
-                <h5 class="twx-section collapse"><#= locale("farm", "general.events") #></h5>
+                <h5 class="twx-section collapse"><#= locale("common", "registers") #></h5>
                 <table class="tbl-border-light tbl-news tbl-big-header">
                     <colgroup>
                         <col width="76px">
@@ -371,7 +379,7 @@
                 <a class="btn-orange btn-border save"><#= locale("farm", "settings.save") #></a>
             </li>
             <li>
-                <a class="btn-green btn-border start"><#= locale("farm", "general.start") #></a>
+                <a class="btn-green btn-border start"><#= locale("common", "start") #></a>
             </li>
         </ul>
     </footer>
