@@ -114,11 +114,13 @@ define('TWOverflow/Farm/interface', [
             }
         })
 
-        Farm.updateSettings(newSettings)
-
-        if (Farm.isNotifsEnabled()) {
+        if (Farm.updateSettings(newSettings)) {
             emitNotif('success', Locale('farm', 'settings.saved'))
+
+            return true
         }
+
+        return false
     }
 
     /**
@@ -660,6 +662,12 @@ define('TWOverflow/Farm/interface', [
             $start.html(Locale('common', 'start'))
             $start.removeClass('btn-red').addClass('btn-green')
             opener.$elem.removeClass('btn-red').addClass('btn-green')
+        })
+
+        Farm.bind('settingError', function (key, replaces) {
+            var localeKey = 'settingError.' + key
+
+            emitNotif('error', Locale('farm', localeKey, replaces))
         })
 
         if (modelDataService.getPresetList().isLoaded()) {

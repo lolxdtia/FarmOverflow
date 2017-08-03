@@ -101,5 +101,14 @@
     "tooltip.singleCycle":"With the single cycle activated, the FarmOverflow will use only once the villages to attack, as soon as it finish the FarmOverflow will be stopped. You can configure the interval below if you want the cycle to restart after the time specified.",
     "tooltip.singleCycleInterval":"After the cycle ends, a new cycle will start after the specified time. Leave the field empty (0:00:00) If you do not want to reboot cycle.",
     "tooltip.singleCycleNotifs":"A warning notification will be displayed whenever a cycle finish or start.",
-    "tooltip.maxAttacksPerVillage": "Reserve some slots of commands in case of emergencies (each village has a limit of 50 commands)."
+    "tooltip.maxAttacksPerVillage": "Reserve some slots of commands in case of emergencies (each village has a limit of 50 commands).",
+    "settingError.minDistance": "The target distance must be between %{min} and %{max}.",
+    "settingError.maxDistance": "The target distance must be between %{min} and %{max}.",
+    "settingError.maxTravelTime": "Maximum travel time format must be hh:mm:ss.",
+    "settingError.randomBase": "The random interval base must be between %{min} and %{max}.",
+    "settingError.minPoints": "The target pontuation must be a value between %{min} and %{max}.",
+    "settingError.maxPoints": "The target pontuation must be a value between %{min} and %{max}.",
+    "settingError.eventsLimit": "The amount of events must be a value between %{min} and %{max}.",
+    "settingError.singleCycleInterval": "Format of interval between cycles must be hh:mm:ss.",
+    "settingError.maxAttacksPerVillage": "The maximum attacks per village must be a value between %{min} and %{max}."
 }

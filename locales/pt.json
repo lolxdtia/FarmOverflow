@@ -101,5 +101,14 @@
     "tooltip.singleCycle": "Com o ciclo único ativado, o FarmOverflow irá usar apenas uma vez as aldeias para atacar, assim que acabar o FarmOverflow será parado. Você pode configurar o intervalo abaixo se quiser que ele reinicie após o tempo especificado.",
     "tooltip.singleCycleInterval": "Após o ciclo terminar, um novo ciclo inicirá após o tempo especificado. Deixe o campo vazio (0:00:00) se não quiser que o ciclo se reinicie.",
     "tooltip.singleCycleNotifs": "Será mostrada uma notificação de aviso sempre que um ciclo terminar ou iniciar.",
-    "tooltip.maxAttacksPerVillage": "Reserve alguns slots de comandos para casos de emergência (cada aldeia tem um limite de 50 ataques)."
+    "tooltip.maxAttacksPerVillage": "Reserve alguns slots de comandos para casos de emergência (cada aldeia tem um limite de 50 ataques).",
+    "settingError.minDistance": "A distância deve ser um valor entre %{min} e %{max}.",
+    "settingError.maxDistance": "A distância deve ser um valor entre %{min} e %{max}.",
+    "settingError.maxTravelTime": "O formato do tempo máximo de viagem deve ser hh:mm:ss.",
+    "settingError.randomBase": "O intervalo entre cada ataque deve ser um valor entre %{min} e %{max}.",
+    "settingError.minPoints": "A pontuação do alvo deve ser entre %{min} e %{max}.",
+    "settingError.maxPoints": "A pontuação do alvo deve ser entre %{min} e %{max}.",
+    "settingError.eventsLimit": "O número de eventos deve ser entre %{min} e %{max}.",
+    "settingError.singleCycleInterval": "O formato do intervalo entre ataques deve ser hh:mm:ss.",
+    "settingError.maxAttacksPerVillage": "A quantidade máximo de ataques por aldeia deve ser um valor entre %{min} e %{max}."
 }

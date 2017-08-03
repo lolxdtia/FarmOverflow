@@ -1086,22 +1086,29 @@ define('TWOverflow/Farm', [
             maxDistance: {
                 default: 10,
                 updates: ['targets'],
-                inputType: 'text'
+                inputType: 'text',
+                min: 0,
+                max: 50
             },
             minDistance: {
                 default: 0,
                 updates: ['targets'],
-                inputType: 'text'
+                inputType: 'text',
+                min: 0,
+                max: 50
             },
             maxTravelTime: {
                 default: '01:00:00',
                 updates: [],
-                inputType: 'text'
+                inputType: 'text',
+                pattern: /\d{1,2}\:\d{2}\:\d{2}/
             },
             randomBase: {
                 default: 3,
                 updates: [],
-                inputType: 'text'
+                inputType: 'text',
+                min: 0,
+                max: 9999
             },
             presetName: {
                 default: '',
@@ -1126,17 +1133,23 @@ define('TWOverflow/Farm', [
             minPoints: {
                 default: 0,
                 updates: ['targets'],
-                inputType: 'text'
+                inputType: 'text',
+                min: 0,
+                max: 13000
             },
             maxPoints: {
                 default: 12500,
                 updates: ['targets'],
-                inputType: 'text'
+                inputType: 'text',
+                min: 0,
+                max: 13000
             },
             eventsLimit: {
                 default: 20,
                 updates: ['events'],
-                inputType: 'text'
+                inputType: 'text',
+                min: 0,
+                max: 150
             },
             ignoreOnLoss: {
                 default: true,
@@ -1196,12 +1209,15 @@ define('TWOverflow/Farm', [
             singleCycleInterval: {
                 default: '00:00:00',
                 updates: [],
-                inputType: 'text'
+                inputType: 'text',
+                pattern: /\d{1,2}\:\d{2}\:\d{2}/
             },
             maxAttacksPerVillage: {
                 default: 48,
                 updates: [],
-                inputType: 'text'
+                inputType: 'text',
+                min: 1,
+                max: 50
             }
         }
 
@@ -1332,25 +1348,38 @@ define('TWOverflow/Farm', [
         var modify = {}
 
         for (var key in changes) {
-            if (changes[key] !== Farm.settings[key]) {
-                var modifyKeys = Farm.settingsMap[key].updates
+            var settingMap = Farm.settingsMap[key]
+            var newValue = changes[key]
 
-                if (Farm.settingsMap.hasOwnProperty(key)) {
-                    for (var i = 0; i < modifyKeys.length; i++) {
-                        modify[modifyKeys[i]] = true
-                    }
+            if (!settingMap || newValue === Farm.settings[key]) {
+                continue
+            }
+
+            if (settingMap.hasOwnProperty('pattern')) {
+                if (!settingMap.pattern.test(newValue)) {
+                    Farm.trigger('settingError', [key])
+
+                    return false
+                }
+            } else if (settingMap.hasOwnProperty('min')) {
+                if (newValue < settingMap.min || newValue > settingMap.max) {
+                    Farm.trigger('settingError', [key, {
+                        min: settingMap.min,
+                        max: settingMap.max
+                    }])
+
+                    return false
                 }
             }
 
-            Farm.settings[key] = changes[key]
+            settingMap.updates.forEach(function (modifier) {
+                modify[modifier] = true
+            })
+
+            Farm.settings[key] = newValue
         }
 
         Lockr.set('farm-settings', Farm.settings)
-
-        // Nenhuma alteração nas configurações
-        if (angular.equals(modify, {})) {
-            return false
-        }
 
         if (modify.groups) {
             updateExceptionGroups()
@@ -1384,6 +1413,8 @@ define('TWOverflow/Farm', [
         }
 
         Farm.trigger('settingsChange', [modify])
+
+        return true
     }
 
     /**
