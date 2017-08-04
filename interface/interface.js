@@ -340,10 +340,10 @@ define('TWOverflow/Farm/interface', [
                 var name = groups[id].name
                 var selected = Farm.settings[type] == id
 
-                if (Farm.settings[type] == 0) {
+                if (Farm.settings[type] === '') {
                     $selectedOption.html(disabled)
                     $groups[type][0].dataset.name = disabled
-                    $groups[type][0].dataset.value = '0'
+                    $groups[type][0].dataset.value = ''
                 } else if (Farm.settings[type] == id) {
                     $selectedOption.html(name)
                     $groups[type][0].dataset.name = name

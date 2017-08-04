@@ -1116,17 +1116,17 @@ define('TWOverflow/Farm', [
                 inputType: 'select'
             },
             groupIgnore: {
-                default: 0,
+                default: '',
                 updates: ['groups'],
                 inputType: 'select'
             },
             groupInclude: {
-                default: 0,
+                default: '',
                 updates: ['groups', 'targets'],
                 inputType: 'select'
             },
             groupOnly: {
-                default: 0,
+                default: '',
                 updates: ['groups', 'villages', 'targets'],
                 inputType: 'select'
             },
