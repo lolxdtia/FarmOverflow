@@ -45,18 +45,6 @@ define('TWOverflow/Farm/interface', [
     var rpreset = /(\(|\{|\[|\"|\')[^\)\}\]\"\']+(\)|\}|\]|\"|\')/
 
     /**
-     * Gera um <select>
-     *
-     * @param  {String} value - Valor do select
-     * @param  {String} label - Texto exibido no select
-     * @param  {Boolean} selected - Inclui o atributo "selected"
-     * @return {String} Select montado
-     */
-    var genSelect = function (value, label, selected) {
-        return '<option value="' + value + '"' + (selected ? ' selected' : '') + '>' + label + '</option>'
-    }
-
-    /**
      * Tradução de "desativado" para a linguagem selecionada.
      *
      * @type {String}
