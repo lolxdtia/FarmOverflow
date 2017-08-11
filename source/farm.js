@@ -809,9 +809,9 @@ define('TWOverflow/Farm', [
         Farm.bind('singleCycleEndNoVillages', function () {
             currentStatus = 'singleCycleEndNoVillages'
 
-            if (notifsEnabled && Farm.settings.singleCycleNotifs) {
+            if (notifsEnabled) {
                 emitNotif('error', Locale('farm', 'events.singleCycleEndNoVillages'))
-            }[]
+            }
         })
 
         Farm.bind('singleCycleNext', function () {
@@ -1052,7 +1052,26 @@ define('TWOverflow/Farm', [
      */
     var getFreeVillages = function () {
         return playerVillages.filter(function (village) {
-            return !waitingVillages[village.id]
+            if (waitingVillages[village.id]) {
+                return false
+            }
+
+            if (!Farm.settings.ignoreFullRes) {
+                return true
+            }
+
+            var resources = village.getResources()
+            var maxStorage = village.getMaxStorage()
+
+            var isFull = ['wood', 'clay', 'iron'].every(function (res) {
+                return resources[res] === maxStorage
+            })
+
+            if (isFull) {
+                return false
+            }
+
+            return true
         })
     }
 
@@ -1218,6 +1237,11 @@ define('TWOverflow/Farm', [
                 inputType: 'text',
                 min: 1,
                 max: 50
+            },
+            ignoreFullRes: {
+                default: true,
+                updates: ['villages'],
+                inputType: 'checkbox'
             }
         }
 

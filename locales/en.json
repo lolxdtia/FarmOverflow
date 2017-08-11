@@ -90,6 +90,7 @@
     "settings.singleCycleInterval":"Interval between cycles",
     "settings.singleCycleNotifs":"Turn on notifications of cycles",
     "settings.maxAttacksPerVillage": "Maximum attacks per village",
+    "settings.ignoreFullRes": "Ignore own villages with full resources",
     "tooltip.presets":"Select the preset that will be used to send the attacks.",
     "tooltip.groupIgnore":"Select a group to ignore all villages assigned to it. The group works on targets and your own villages as well.",
     "tooltip.groupInclude":"Select a group to include villages that aren't barbarians only.",

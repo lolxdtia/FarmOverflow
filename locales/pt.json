@@ -90,6 +90,7 @@
     "settings.singleCycleInterval": "Intervalo entre os ciclos",
     "settings.singleCycleNotifs": "Ativar notificações dos ciclos",
     "settings.maxAttacksPerVillage": "Máximo de ataques por aldeia",
+    "settings.ignoreFullRes": "Ignorar próprias aldeias com recursos lotados",
     "tooltip.presets": "Selecione a predefinição que será usada para enviar os ataques.",
     "tooltip.groupIgnore": "Selecione um grupo para que todas aldeias atribuidas a esse grupo sejam ignoradas. Tanto suas aldeias quanto alvos.",
     "tooltip.groupInclude": "Selecione um grupo para incluir alvos que não sejam apenas aldeias bárbaras.",
