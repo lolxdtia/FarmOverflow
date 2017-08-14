@@ -97,61 +97,68 @@
                     </colgroup>
                     <tbody>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.presets") #>">
+                            <td>
                                 <span class="icon-34x34-preset"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.presetName") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.presets") #>">?</span>
                             </td>
                             <td>
                                 <select data-setting="presetName" class="preset"></select>
                             </td>
                         </tr>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.groupIgnore") #>">
+                            <td>
                                 <span class="icon-20x20-queue-indicator-short"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.groupIgnore") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.groupIgnore") #>">?</span>
                             </td>
                             <td>
                                 <select data-setting="groupIgnore" class="ignore"></select>
                             </td>
                         </tr>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.groupInclude") #>">
+                            <td>
                                 <span class="icon-20x20-queue-indicator-long"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.groupInclude") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.groupInclude") #>">?</span>
                             </td>
                             <td>
                                 <select data-setting="groupInclude" class="include"></select>
                             </td>
                         </tr>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.groupOnly") #>">
+                            <td>
                                 <span class="icon-20x20-favourite"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.groupOnly") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.groupOnly") #>">?</span>
                             </td>
                             <td>
                                 <select data-setting="groupOnly" class="only"></select>
                             </td>
                         </tr>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.randomBase") #>">
+                            <td>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.randomBase") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.randomBase") #>">?</span>
                             </td>
                             <td>
                                 <input data-setting="randomBase" type="number" class="textfield-border" min="0" required>
                             </td>
                         </tr>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.maxAttacksPerVillage") #>">
+                            <td>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.maxAttacksPerVillage") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.maxAttacksPerVillage") #>">?</span>
                             </td>
                             <td>
                                 <input data-setting="maxAttacksPerVillage" type="number" class="textfield-border" min="0" max="50" required>
                             </td>
                         </tr>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.priorityTargets") #>">
+                            <td>
                                 <span class="icon-34x34-name_changed"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.priorityTargets") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.priorityTargets") #>">?</span>
                             </td>
                             <td>
                                 <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-priorityTargets">
@@ -160,8 +167,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.ignoreOnLoss") #>">
+                            <td>
                                 <span class="ff-cell-fix"><#- locale("farm", "settings.ignoreOnLoss") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.ignoreOnLoss") #>">?</span>
                             </td>
                             <td>
                                 <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-ignoreOnLoss">
@@ -190,8 +198,9 @@
                     </colgroup>
                     <tbody>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.singleCycle") #>">
+                            <td>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.singleCycle") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.singleCycle") #>">?</span>
                             </td>
                             <td>
                                 <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-singleCycle">
@@ -200,8 +209,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.singleCycleNotifs") #>">
+                            <td>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.singleCycleNotifs") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.singleCycleNotifs") #>">?</span>
                             </td>
                             <td>
                                 <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-singleCycleNotifs">
@@ -210,8 +220,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.singleCycleInterval") #>">
+                            <td>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.singleCycleInterval") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.singleCycleInterval") #>">?</span>
                             </td>
                             <td><input data-setting="singleCycleInterval" type="text" class="textfield-border" placeholder="00:00:00"></td>
                         </tr>
@@ -321,9 +332,10 @@
                     </colgroup>
                     <tbody>
                         <tr>
-                            <td tooltip="<#= locale("farm", "tooltip.remote") #>">
+                            <td>
                                 <span class="icon-26x26-message-misc"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.remote") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.remote") #>">?</span>
                             </td>
                             <td><input data-setting="remoteId" type="text" class="textfield-border" min="3" max="45"></td>
                         </tr>
