@@ -1,6 +1,7 @@
 define('TWOverflow/Farm', [
     'TWOverflow/locale',
     'TWOverflow/Farm/Village',
+    'TWOverflow/utils',
     'helper/math',
     'conf/conf',
     'struct/MapData',
@@ -11,6 +12,7 @@ define('TWOverflow/Farm', [
 ], function (
     Locale,
     Village,
+    utils,
     $math,
     $conf,
     $mapData,
@@ -802,7 +804,7 @@ define('TWOverflow/Farm', [
             currentStatus = 'singleCycleEnd'
 
             if (notifsEnabled && Farm.settings.singleCycleNotifs) {
-                emitNotif('error', Locale('farm', 'events.singleCycleEnd'))
+                utils.emitNotif('error', Locale('farm', 'events.singleCycleEnd'))
             }
         })
 
@@ -810,7 +812,7 @@ define('TWOverflow/Farm', [
             currentStatus = 'singleCycleEndNoVillages'
 
             if (notifsEnabled) {
-                emitNotif('error', Locale('farm', 'events.singleCycleEndNoVillages'))
+                utils.emitNotif('error', Locale('farm', 'events.singleCycleEndNoVillages'))
             }
         })
 
@@ -820,8 +822,8 @@ define('TWOverflow/Farm', [
             if (notifsEnabled && Farm.settings.singleCycleNotifs) {
                 var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
-                emitNotif('success', Locale('farm', 'events.singleCycleNext', {
-                    time: formatDate(next)
+                utils.emitNotif('success', Locale('farm', 'events.singleCycleNext', {
+                    time: utils.formatDate(next)
                 }))
             }
         })
@@ -1007,12 +1009,12 @@ define('TWOverflow/Farm', [
         if (currentStatus === 'singleCycleNext') {
             var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
-            statusReplaces.time = formatDate(next)
+            statusReplaces.time = utils.formatDate(next)
         }
 
         var farmStatus = Locale('farm', 'events.' + currentStatus, statusReplaces)
-        var villageLabel = genVillageLabel(selectedVillage)
-        var last = formatDate(lastAttack)
+        var villageLabel = utils.genVillageLabel(selectedVillage)
+        var last = utils.formatDate(lastAttack)
         var vid = selectedVillage.id
 
         var message = []
@@ -1294,7 +1296,7 @@ define('TWOverflow/Farm', [
     Farm.start = function (autoInit) {
         if (!selectedPresets.length) {
             if (!autoInit && notifsEnabled) {
-                emitNotif('error', Locale('farm', 'events.presetFirst'))
+                utils.emitNotif('error', Locale('farm', 'events.presetFirst'))
             }
 
             return false
@@ -1302,7 +1304,7 @@ define('TWOverflow/Farm', [
 
         if (!selectedVillage) {
             if (!autoInit && notifsEnabled) {
-                emitNotif('error', Locale('farm', 'events.noSelectedVillage'))
+                utils.emitNotif('error', Locale('farm', 'events.noSelectedVillage'))
             }
 
             return false
@@ -1337,7 +1339,7 @@ define('TWOverflow/Farm', [
         Farm.trigger('pause')
 
         if (notifsEnabled) {
-            emitNotif('success', Locale('common', 'paused'))
+            utils.emitNotif('success', Locale('common', 'paused'))
         }
 
         return true
@@ -1665,7 +1667,7 @@ define('TWOverflow/Farm', [
         Farm.trigger('start')
 
         if (notifsEnabled) {
-            emitNotif('success', Locale('farm', 'general.started'))
+            utils.emitNotif('success', Locale('farm', 'general.started'))
         }
 
         if (getFreeVillages().length === 0) {

@@ -1,7 +1,8 @@
 define('TWOverflow/Farm/Commander', [
     'TWOverflow/Farm',
+    'TWOverflow/utils',
     'helper/math'
-], function (Farm, $math) {
+], function (Farm, utils, $math) {
     /**
      * Controla os ciclos de comandos, enviando ataques, alternando
      * aldeias e alvos.
@@ -271,7 +272,7 @@ define('TWOverflow/Farm/Commander', [
             'attack'
         )
 
-        var limitTime = time2seconds(Farm.settings.maxTravelTime)
+        var limitTime = utils.time2seconds(Farm.settings.maxTravelTime)
 
         return limitTime > totalTravelTime
     }
@@ -315,7 +316,7 @@ define('TWOverflow/Farm/Commander', [
 
             // Intervalo mínimo de 1 segundo para que o jogo registre as
             // alterações das unidades no objeto local da aldeia.
-            interval = randomSeconds(Farm.settings.randomBase)
+            interval = utils.randomSeconds(Farm.settings.randomBase)
             interval = 1000 + (interval * 1000)
 
             self.timeoutId = setTimeout(function () {

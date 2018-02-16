@@ -1,7 +1,8 @@
 define('TWOverflow/Farm/singleCycle', [
     'TWOverflow/Farm',
     'TWOverflow/locale',
-], function (Farm, Locale) {
+    'TWOverflow/utils'
+], function (Farm, Locale, utils) {
     /**
      * Lista de aldeias restantes no ciclo único
      *
@@ -67,7 +68,7 @@ define('TWOverflow/Farm/singleCycle', [
         if (autoInit) {
             Farm.bind('singleCycleRestart')
         } else if (Farm.isNotifsEnabled()) {
-            emitNotif('success', Locale('farm', 'general.started'))
+            utils.emitNotif('success', Locale('farm', 'general.started'))
         }
 
         villageList = freeVillages

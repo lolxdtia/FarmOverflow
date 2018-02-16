@@ -4,6 +4,7 @@ define('TWOverflow/Farm/interface', [
     'TWOverflow/Interface',
     'TWOverflow/Interface/buttonLink',
     'TWOverflow/FrontButton',
+    'TWOverflow/utils',
     'helper/time',
     'Lockr',
     'ejs'
@@ -13,6 +14,7 @@ define('TWOverflow/Farm/interface', [
     Interface,
     buttonLink,
     FrontButton,
+    utils,
     $timeHelper,
     Lockr,
     ejs
@@ -103,7 +105,7 @@ define('TWOverflow/Farm/interface', [
         })
 
         if (Farm.updateSettings(newSettings)) {
-            emitNotif('success', Locale('farm', 'settings.saved'))
+            utils.emitNotif('success', Locale('farm', 'settings.saved'))
 
             return true
         }
@@ -250,8 +252,8 @@ define('TWOverflow/Farm/interface', [
             options.content = Locale('farm', 'events.' + options.type, linkTemplate)
         }
 
-        var longDate = formatDate(timestamp)
-        var shortDate = formatDate(timestamp, 'HH:mm:ss')
+        var longDate = utils.formatDate(timestamp)
+        var shortDate = utils.formatDate(timestamp, 'HH:mm:ss')
 
         eventElement.innerHTML = ejs.render('__farm_html_event', {
             longDate: longDate,
@@ -288,7 +290,7 @@ define('TWOverflow/Farm/interface', [
             return $selected.html(Locale('common', 'none'))
         }
 
-        var village = buttonLink('village', genVillageLabel(selectedVillage), selectedVillage.id)
+        var village = buttonLink('village', utils.genVillageLabel(selectedVillage), selectedVillage.id)
 
         $selected.html('')
         $selected.append(village.elem)
@@ -309,7 +311,7 @@ define('TWOverflow/Farm/interface', [
             }
         }
 
-        $last.html(formatDate(lastAttack))
+        $last.html(utils.formatDate(lastAttack))
 
         updateQuickview()
     }
@@ -496,8 +498,8 @@ define('TWOverflow/Farm/interface', [
 
             addEvent({
                 links: {
-                    origin: { type: 'village', name: genVillageLabel(from), id: from.id },
-                    target: { type: 'village', name: genVillageLabel(to), id: to.id }
+                    origin: { type: 'village', name: utils.genVillageLabel(from), id: from.id },
+                    target: { type: 'village', name: utils.genVillageLabel(to), id: to.id }
                 },
                 icon: 'attack-small',
                 type: 'sendCommand'
@@ -513,7 +515,7 @@ define('TWOverflow/Farm/interface', [
 
             addEvent({
                 links: {
-                    village: { type: 'village', name: genVillageLabel(next), id: next.id }
+                    village: { type: 'village', name: utils.genVillageLabel(next), id: next.id }
                 },
                 icon: 'village',
                 type: 'nextVillage'
@@ -527,7 +529,7 @@ define('TWOverflow/Farm/interface', [
 
             addEvent({
                 links: {
-                    target: { type: 'village', name: genVillageLabel(target), id: target.id }
+                    target: { type: 'village', name: utils.genVillageLabel(target), id: target.id }
                 },
                 icon: 'check-negative',
                 type: 'ignoredVillage'
@@ -541,7 +543,7 @@ define('TWOverflow/Farm/interface', [
 
             addEvent({
                 links: {
-                    target: { type: 'village', name: genVillageLabel(target), id: target.id }
+                    target: { type: 'village', name: utils.genVillageLabel(target), id: target.id }
                 },
                 icon: 'parallel-recruiting',
                 type: 'priorityTargetAdded'
@@ -587,7 +589,7 @@ define('TWOverflow/Farm/interface', [
             var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
             $status.html(Locale('farm', 'events.singleCycleNext', {
-                time: formatDate(next)
+                time: utils.formatDate(next)
             }))
         })
 
@@ -595,7 +597,7 @@ define('TWOverflow/Farm/interface', [
             var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
             $status.html(Locale('farm', 'events.singleCycleNextNoVillages', {
-                time: formatDate(next)
+                time: utils.formatDate(next)
             }))
         })
 
@@ -655,7 +657,7 @@ define('TWOverflow/Farm/interface', [
         Farm.bind('settingError', function (key, replaces) {
             var localeKey = 'settingError.' + key
 
-            emitNotif('error', Locale('farm', localeKey, replaces))
+            utils.emitNotif('error', Locale('farm', localeKey, replaces))
         })
 
         if (modelDataService.getPresetList().isLoaded()) {
