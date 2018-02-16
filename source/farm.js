@@ -1272,7 +1272,9 @@ define('TWOverflow/Farm', [
         for (var key in Farm.settingsMap) {
             var defaultValue = Farm.settingsMap[key].default
 
-            Farm.settings[key] = localSettings[key] || defaultValue
+            Farm.settings[key] = localSettings.hasOwnProperty(key)
+                ? localSettings[key]
+                : defaultValue
         }
 
         Farm.commander = Farm.createCommander()
