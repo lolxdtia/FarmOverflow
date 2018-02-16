@@ -57,6 +57,13 @@ define('TWOverflow/Farm', [
     var PERSISTENT_TOLERANCE = 1000 * 60 * 5
 
     /**
+     * Intervalo de tempo usado na reciclagem de todas aldeias alvos.
+     *
+     * @type {Number}
+     */
+    var TARGETS_RELOAD_TIME = 1000 * 60 * 5
+
+    /**
      * Limpa qualquer text entre (, [, {, " & ' do nome dos presets
      * para serem idetificados com o mesmo nome.
      *
@@ -965,6 +972,19 @@ define('TWOverflow/Farm', [
     }
 
     /**
+     * Reseta a lista de alvos carregados toda vez em um intervalo de tempo,
+     * evitando que aldeias abandonadas que forem nobladas por outros jogadores
+     * sejam atacadas.
+     *
+     * https://github.com/TWOverflow/TWOverflow/issues/58
+     */
+    var initTargetsProof = function () {
+        setInterval(function () {
+            villagesTargets = {}
+        }, TARGETS_RELOAD_TIME)
+    }
+
+    /**
      * Carrega os dados de um relatório.
      *
      * @param {Number} reportId - ID do relatório
@@ -1274,6 +1294,7 @@ define('TWOverflow/Farm', [
         generalListeners()
         bindEvents()
         initPersistentRunning()
+        initTargetsProof()
 
         // Carrega pedaços da mapa quando chamado.
         // É disparado quando o método $mapData.loadTownDataAsync
