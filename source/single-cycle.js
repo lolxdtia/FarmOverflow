@@ -1,8 +1,14 @@
 define('TWOverflow/Farm/singleCycle', [
     'TWOverflow/Farm',
     'TWOverflow/locale',
-    'TWOverflow/utils'
-], function (Farm, Locale, utils) {
+    'TWOverflow/utils',
+    'TWOverflow/eventQueue'
+], function (
+    Farm,
+    Locale,
+    utils,
+    eventQueue
+) {
     /**
      * Lista de aldeias restantes no ciclo único
      *
@@ -44,18 +50,18 @@ define('TWOverflow/Farm/singleCycle', [
         Farm.commander.running = true
 
         Farm.disableNotifs(function () {
-            Farm.trigger('start')
+            Farm.eventQueueTrigger('Farm/start')
         })
 
         var freeVillages = Farm.getFreeVillages()
 
         if (freeVillages.length === 0) {
             if (cycle.intervalEnabled()) {
-                Farm.trigger('singleCycleNextNoVillages')
+                Farm.eventQueueTrigger('Farm/singleCycleNextNoVillages')
                 cycle.setNextCycle()
             } else {
                 // emit apenas uma notificação de erro
-                Farm.trigger('singleCycleEndNoVillages')
+                Farm.eventQueueTrigger('Farm/singleCycleEndNoVillages')
 
                 Farm.disableNotifs(function () {
                     Farm.stop()
@@ -66,7 +72,7 @@ define('TWOverflow/Farm/singleCycle', [
         }
 
         if (autoInit) {
-            Farm.bind('singleCycleRestart')
+            eventQueue.bind('Farm/singleCycleRestart')
         } else if (Farm.isNotifsEnabled()) {
             utils.emitNotif('success', Locale('farm', 'general.started'))
         }
@@ -81,10 +87,10 @@ define('TWOverflow/Farm/singleCycle', [
      */
     cycle.end = function () {
         if (cycle.intervalEnabled()) {
-            Farm.trigger('singleCycleNext')
+            Farm.eventQueueTrigger('Farm/singleCycleNext')
             cycle.setNextCycle()
         } else {
-            Farm.trigger('singleCycleEnd')
+            Farm.eventQueueTrigger('Farm/singleCycleEnd')
 
             Farm.disableNotifs(function () {
                 Farm.stop()
@@ -127,7 +133,7 @@ define('TWOverflow/Farm/singleCycle', [
         }
 
         Farm.setSelectedVillage(next)
-        Farm.trigger('nextVillage', [next])
+        Farm.eventQueueTrigger('Farm/nextVillage', [next])
 
         return true
     }

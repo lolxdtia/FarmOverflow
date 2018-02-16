@@ -2,6 +2,7 @@ define('TWOverflow/Farm', [
     'TWOverflow/locale',
     'TWOverflow/Farm/Village',
     'TWOverflow/utils',
+    'TWOverflow/eventQueue',
     'helper/math',
     'conf/conf',
     'struct/MapData',
@@ -13,6 +14,7 @@ define('TWOverflow/Farm', [
     Locale,
     Village,
     utils,
+    eventQueue,
     $math,
     $conf,
     $mapData,
@@ -105,13 +107,6 @@ define('TWOverflow/Farm', [
      * @type {Object}
      */
     var selectedTarget = null
-
-    /**
-     * Callbacks usados pelos eventos que são disparados no decorrer do script.
-     *
-     * @type {Object}
-     */
-    var eventListeners = {}
 
     /**
      * Propriedade usada para permitir ou não o disparo de eventos.
@@ -416,7 +411,7 @@ define('TWOverflow/Farm', [
             }
         }
 
-        Farm.trigger('villagesUpdate')
+        Farm.eventQueueTrigger('Farm/villagesUpdate')
     }
 
     /**
@@ -461,7 +456,7 @@ define('TWOverflow/Farm', [
             update(modelDataService.getPresetList().getPresets())
         } else {
             socketService.emit(routeProvider.GET_PRESETS, {}, function (data) {
-                Farm.trigger('presetsLoaded')
+                Farm.eventQueueTrigger('Farm/presetsLoaded')
                 update(data.presets)
             })
         }
@@ -515,7 +510,7 @@ define('TWOverflow/Farm', [
 
                 priorityTargets[vid].push(tid)
 
-                Farm.trigger('priorityTargetAdded', [{
+                Farm.eventQueueTrigger('Farm/priorityTargetAdded', [{
                     id: tid,
                     name: attack.defVillageName,
                     x: attack.defVillageX,
@@ -611,7 +606,7 @@ define('TWOverflow/Farm', [
                 })
 
                 sendMessageReply(data.message_id, genStatusReply())
-                Farm.trigger('remoteCommand', ['on'])
+                Farm.eventQueueTrigger('Farm/remoteCommand', ['on'])
 
                 break
             case 'off':
@@ -623,13 +618,13 @@ define('TWOverflow/Farm', [
                 })
 
                 sendMessageReply(data.message_id, genStatusReply())
-                Farm.trigger('remoteCommand', ['off'])
+                Farm.eventQueueTrigger('Farm/remoteCommand', ['off'])
 
                 break
             case 'status':
             case 'current':
                 sendMessageReply(data.message_id, genStatusReply())
-                Farm.trigger('remoteCommand', ['status'])
+                Farm.eventQueueTrigger('Farm/remoteCommand', ['status'])
 
                 break
             }
@@ -650,11 +645,11 @@ define('TWOverflow/Farm', [
          */
         var updatePresetsHandler = function () {
             updatePresets()
-            Farm.trigger('presetsChange')
+            Farm.eventQueueTrigger('Farm/presetsChange')
 
             if (!selectedPresets.length) {
                 if (Farm.commander.running) {
-                    Farm.trigger('noPreset')
+                    Farm.eventQueueTrigger('Farm/noPreset')
                     Farm.stop()
                 }
             }
@@ -669,7 +664,7 @@ define('TWOverflow/Farm', [
             updateExceptionGroups()
             updateExceptionVillages()
 
-            Farm.trigger('groupsChanged')
+            Farm.eventQueueTrigger('Farm/groupsChanged')
         }
 
         /**
@@ -759,48 +754,48 @@ define('TWOverflow/Farm', [
      */
     var bindEvents = function () {
         // Lista de eventos para atualizar o último status do Farm.
-        Farm.bind('sendCommand', function () {
+        eventQueue.bind('Farm/sendCommand', function () {
             updateLastAttack()
             currentStatus = 'attacking'
         })
 
-        Farm.bind('noPreset', function () {
+        eventQueue.bind('Farm/noPreset', function () {
             currentStatus = 'paused'
         })
 
-        Farm.bind('noUnits', function () {
+        eventQueue.bind('Farm/noUnits', function () {
             currentStatus = 'noUnits'
         })
 
-        Farm.bind('noUnitsNoCommands', function () {
+        eventQueue.bind('Farm/noUnitsNoCommands', function () {
             currentStatus = 'noUnitsNoCommands'
         })
 
-        Farm.bind('start', function () {
+        eventQueue.bind('Farm/start', function () {
             currentStatus = 'attacking'
         })
 
-        Farm.bind('pause', function () {
+        eventQueue.bind('Farm/pause', function () {
             currentStatus = 'paused'
         })
 
-        Farm.bind('startLoadingTargers', function () {
+        eventQueue.bind('Farm/startLoadingTargers', function () {
             currentStatus = 'loadingTargets'
         })
 
-        Farm.bind('endLoadingTargers', function () {
+        eventQueue.bind('Farm/endLoadingTargers', function () {
             currentStatus = 'analyseTargets'
         })
 
-        Farm.bind('commandLimitSingle', function () {
+        eventQueue.bind('Farm/commandLimitSingle', function () {
             currentStatus = 'commandLimit'
         })
 
-        Farm.bind('commandLimitMulti', function () {
+        eventQueue.bind('Farm/commandLimitMulti', function () {
             currentStatus = 'noVillages'
         })
 
-        Farm.bind('singleCycleEnd', function () {
+        eventQueue.bind('Farm/singleCycleEnd', function () {
             currentStatus = 'singleCycleEnd'
 
             if (notifsEnabled && Farm.settings.singleCycleNotifs) {
@@ -808,7 +803,7 @@ define('TWOverflow/Farm', [
             }
         })
 
-        Farm.bind('singleCycleEndNoVillages', function () {
+        eventQueue.bind('Farm/singleCycleEndNoVillages', function () {
             currentStatus = 'singleCycleEndNoVillages'
 
             if (notifsEnabled) {
@@ -816,7 +811,7 @@ define('TWOverflow/Farm', [
             }
         })
 
-        Farm.bind('singleCycleNext', function () {
+        eventQueue.bind('Farm/singleCycleNext', function () {
             currentStatus = 'singleCycleNext'
 
             if (notifsEnabled && Farm.settings.singleCycleNotifs) {
@@ -900,7 +895,7 @@ define('TWOverflow/Farm', [
             group_id: groupIgnore.id,
             village_id: target.id
         }, function () {
-            Farm.trigger('ignoredVillage', [target])
+            Farm.eventQueueTrigger('Farm/ignoredVillage', [target])
         })
     }
 
@@ -1336,7 +1331,7 @@ define('TWOverflow/Farm', [
         clearTimeout(Farm.cycle.getTimeoutId())
 
         Farm.commander.running = false
-        Farm.trigger('pause')
+        Farm.eventQueueTrigger('Farm/pause')
 
         if (notifsEnabled) {
             utils.emitNotif('success', Locale('common', 'paused'))
@@ -1383,13 +1378,13 @@ define('TWOverflow/Farm', [
 
             if (settingMap.hasOwnProperty('pattern')) {
                 if (!settingMap.pattern.test(newValue)) {
-                    Farm.trigger('settingError', [key])
+                    Farm.eventQueueTrigger('Farm/settingError', [key])
 
                     return false
                 }
             } else if (settingMap.hasOwnProperty('min')) {
                 if (newValue < settingMap.min || newValue > settingMap.max) {
-                    Farm.trigger('settingError', [key, {
+                    Farm.eventQueueTrigger('Farm/settingError', [key, {
                         min: settingMap.min,
                         max: settingMap.max
                     }])
@@ -1426,7 +1421,7 @@ define('TWOverflow/Farm', [
         }
 
         if (modify.events) {
-            Farm.trigger('resetEvents')
+            Farm.eventQueueTrigger('Farm/resetEvents')
         }
 
         if (Farm.commander.running) {
@@ -1438,7 +1433,7 @@ define('TWOverflow/Farm', [
             })
         }
 
-        Farm.trigger('settingsChange', [modify])
+        Farm.eventQueueTrigger('Farm/settingsChange', [modify])
 
         return true
     }
@@ -1488,7 +1483,7 @@ define('TWOverflow/Farm', [
             var target = villageTargets[index]
 
             if (ignoredVillages.includes(target.id)) {
-                Farm.trigger('ignoredTarget', [target])
+                Farm.eventQueueTrigger('Farm/ignoredTarget', [target])
 
                 continue
             }
@@ -1563,7 +1558,7 @@ define('TWOverflow/Farm', [
             if (loaded) {
                 loop()
             } else {
-                Farm.trigger('startLoadingTargers')
+                Farm.eventQueueTrigger('Farm/startLoadingTargers')
 
                 var loads = $convert.scaledGridCoordinates(x, y, w, h, chunk)
                 var length = loads.length
@@ -1571,7 +1566,7 @@ define('TWOverflow/Farm', [
 
                 $mapData.loadTownDataAsync(x, y, w, h, function () {
                     if (++index === length) {
-                        Farm.trigger('endLoadingTargers')
+                        Farm.eventQueueTrigger('Farm/endLoadingTargers')
 
                         loop()
                     }
@@ -1632,7 +1627,7 @@ define('TWOverflow/Farm', [
                 if (hasVillages) {
                     Farm.getTargets(callback)
                 } else {
-                    Farm.trigger('noTargets')
+                    Farm.eventQueueTrigger('Farm/noTargets')
                 }
 
                 return false
@@ -1664,7 +1659,7 @@ define('TWOverflow/Farm', [
         Farm.commander = Farm.createCommander()
         Farm.commander.running = true
 
-        Farm.trigger('start')
+        Farm.eventQueueTrigger('Farm/start')
 
         if (notifsEnabled) {
             utils.emitNotif('success', Locale('farm', 'general.started'))
@@ -1672,9 +1667,9 @@ define('TWOverflow/Farm', [
 
         if (getFreeVillages().length === 0) {
             if (singleVillage) {
-                Farm.trigger('noUnits')
+                Farm.eventQueueTrigger('Farm/noUnits')
             } else {
-                Farm.trigger('noVillages')
+                Farm.eventQueueTrigger('Farm/noVillages')
             }
 
             return
@@ -1708,7 +1703,7 @@ define('TWOverflow/Farm', [
 
             if (availVillage) {
                 selectedVillage = next
-                Farm.trigger('nextVillage', [selectedVillage])
+                Farm.eventQueueTrigger('Farm/nextVillage', [selectedVillage])
                 Farm.updateActivity()
 
                 return true
@@ -1723,44 +1718,12 @@ define('TWOverflow/Farm', [
             }
 
             if (singleVillage) {
-                Farm.trigger('noUnits')
+                Farm.eventQueueTrigger('Farm/noUnits')
             } else {
-                Farm.trigger('noVillages')
+                Farm.eventQueueTrigger('Farm/noVillages')
             }
 
             return false
-        }
-    }
-
-    /**
-     * Registra um evento.
-     *
-     * @param {String} event - Nome do evento.
-     * @param {Function} handler - Função chamada quando o evento for disparado.
-     */
-    Farm.bind = function (event, handler) {
-        if (!eventListeners.hasOwnProperty(event)) {
-            eventListeners[event] = []
-        }
-
-        eventListeners[event].push(handler)
-    }
-
-    /**
-     * Chama os eventos.
-     *
-     * @param {String} event - Nome do evento.
-     * @param {Array} args - Argumentos que serão passados no callback.
-     */
-    Farm.trigger = function (event, args) {
-        if (!eventsEnabled) {
-            return
-        }
-
-        if (eventListeners.hasOwnProperty(event)) {
-            eventListeners[event].forEach(function (handler) {
-                handler.apply(Farm, args)
-            })
         }
     }
 
@@ -1774,7 +1737,7 @@ define('TWOverflow/Farm', [
     Farm.checkPresets = function (callback) {
         if (!selectedPresets.length) {
             Farm.stop()
-            Farm.trigger('noPreset')
+            Farm.eventQueueTrigger('Farm/noPreset')
 
             return false
         }
@@ -2010,6 +1973,15 @@ define('TWOverflow/Farm', [
      */
     Farm.setSelectedVillage = function (village) {
         selectedVillage = village
+    }
+
+    /**
+     * Só executa um evento quando for permitido.
+     */
+    Farm.eventQueueTrigger = function (event, args) {
+        if (eventsEnabled) {
+            eventQueue.trigger(event, args)
+        }
     }
 
     // Funções públicas

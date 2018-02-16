@@ -1,7 +1,8 @@
 define('TWOverflow/Farm/analytics', [
     'TWOverflow/Farm',
+    'TWOverflow/eventQueue',
     'Lockr'
-], function (Farm, Lockr) {
+], function (Farm, eventQueue, Lockr) {
     Farm.analytics = function () {
         ga('create', '__farm_analytics', 'auto', '__farm_name')
 
@@ -13,41 +14,41 @@ define('TWOverflow/Farm/analytics', [
         data.push(character.getId())
         data.push(character.getWorldId())
 
-        Farm.bind('start', function () {
+        eventQueue.bind('Farm/start', function () {
             ga('__farm_name.send', 'event', 'behavior', 'start')
         })
 
-        Farm.bind('pause', function () {
+        eventQueue.bind('Farm/pause', function () {
             ga('__farm_name.send', 'event', 'behavior', 'pause')
         })
 
-        Farm.bind('sendCommandError', function (error) {
+        eventQueue.bind('Farm/sendCommandError', function (error) {
             ga('__farm_name.send', 'event', 'commands', 'attackError', error)
         })
 
-        Farm.bind('ignoredVillage', function () {
+        eventQueue.bind('Farm/ignoredVillage', function () {
             ga('__farm_name.send', 'event', 'commands', 'ignoreTarget')
         })
 
-        Farm.bind('priorityTargetAdded', function () {
+        eventQueue.bind('Farm/priorityTargetAdded', function () {
             ga('__farm_name.send', 'event', 'commands', 'priorityTarget')
         })
 
-        Farm.bind('settingsChange', function (modify) {
+        eventQueue.bind('Farm/settingsChange', function (modify) {
             var settings = JSON.stringify(Lockr.get('farm-settings'))
 
             ga('__farm_name.send', 'event', 'behavior', 'settingsChange', data.concat(settings).join('~'))
         })
 
-        Farm.bind('remoteCommand', function (code) {
+        eventQueue.bind('Farm/remoteCommand', function (code) {
             ga('__farm_name.send', 'event', 'behavior', 'remoteCommand', code)
         })
 
-        Farm.bind('nextVillage', function (village) {
+        eventQueue.bind('Farm/nextVillage', function (village) {
             ga('__farm_name.send', 'event', 'behavior', 'villageChange', village.id)
         })
 
-        Farm.bind('sendCommand', function () {
+        eventQueue.bind('Farm/sendCommand', function () {
             ga('__farm_name.send', 'event', 'commands', 'attack', data.join('~'))
         })
     }

@@ -5,6 +5,7 @@ define('TWOverflow/Farm/interface', [
     'TWOverflow/Interface/buttonLink',
     'TWOverflow/FrontButton',
     'TWOverflow/utils',
+    'TWOverflow/eventQueue',
     'helper/time',
     'Lockr',
     'ejs'
@@ -15,6 +16,7 @@ define('TWOverflow/Farm/interface', [
     buttonLink,
     FrontButton,
     utils,
+    eventQueue,
     $timeHelper,
     Lockr,
     ejs
@@ -488,7 +490,7 @@ define('TWOverflow/Farm/interface', [
             groupOnly: $window.find('.only')
         }
 
-        Farm.bind('sendCommand', function (from, to) {
+        eventQueue.bind('Farm/sendCommand', function (from, to) {
             $status.html(Locale('farm', 'events.attacking'))
             updateLastAttack($timeHelper.gameTime())
 
@@ -506,7 +508,7 @@ define('TWOverflow/Farm/interface', [
             })
         })
 
-        Farm.bind('nextVillage', function (next) {
+        eventQueue.bind('Farm/nextVillage', function (next) {
             updateSelectedVillage()
 
             if (!Farm.settings.eventVillageChange) {
@@ -522,7 +524,7 @@ define('TWOverflow/Farm/interface', [
             })
         })
 
-        Farm.bind('ignoredVillage', function (target) {
+        eventQueue.bind('Farm/ignoredVillage', function (target) {
             if (!Farm.settings.eventIgnoredVillage) {
                 return false
             }
@@ -536,7 +538,7 @@ define('TWOverflow/Farm/interface', [
             })
         })
 
-        Farm.bind('priorityTargetAdded', function (target) {
+        eventQueue.bind('Farm/priorityTargetAdded', function (target) {
             if (!Farm.settings.eventPriorityAdd) {
                 return false
             }
@@ -550,7 +552,7 @@ define('TWOverflow/Farm/interface', [
             })
         })
 
-        Farm.bind('noPreset', function () {
+        eventQueue.bind('Farm/noPreset', function () {
             addEvent({
                 icon: 'info',
                 type: 'noPreset'
@@ -559,33 +561,33 @@ define('TWOverflow/Farm/interface', [
             $status.html(Locale('common', 'paused'))
         })
 
-        Farm.bind('noUnits', function () {
+        eventQueue.bind('Farm/noUnits', function () {
             if (Farm.isSingleVillage()) {
                 $status.html(Locale('farm', 'events.noUnits'))
             }
         })
 
-        Farm.bind('noUnitsNoCommands', function () {
+        eventQueue.bind('Farm/noUnitsNoCommands', function () {
             $status.html(Locale('farm', 'events.noUnitsNoCommands'))
         })
 
-        Farm.bind('start', function () {
+        eventQueue.bind('Farm/start', function () {
             $status.html(Locale('farm', 'events.attacking'))
         })
 
-        Farm.bind('pause', function () {
+        eventQueue.bind('Farm/pause', function () {
             $status.html(Locale('common', 'paused'))
         })
 
-        Farm.bind('noVillages', function () {
+        eventQueue.bind('Farm/noVillages', function () {
             $status.html(Locale('farm', 'events.noVillages'))
         })
 
-        Farm.bind('singleCycleEnd', function () {
+        eventQueue.bind('Farm/singleCycleEnd', function () {
             $status.html(Locale('farm', 'events.singleCycleEnd'))
         })
 
-        Farm.bind('singleCycleNext', function () {
+        eventQueue.bind('Farm/singleCycleNext', function () {
             var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
             $status.html(Locale('farm', 'events.singleCycleNext', {
@@ -593,7 +595,7 @@ define('TWOverflow/Farm/interface', [
             }))
         })
 
-        Farm.bind('singleCycleNextNoVillages', function () {
+        eventQueue.bind('Farm/singleCycleNextNoVillages', function () {
             var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
             $status.html(Locale('farm', 'events.singleCycleNextNoVillages', {
@@ -601,60 +603,60 @@ define('TWOverflow/Farm/interface', [
             }))
         })
 
-        Farm.bind('villagesUpdate', function () {
+        eventQueue.bind('Farm/villagesUpdate', function () {
             updateSelectedVillage()
         })
 
-        Farm.bind('startLoadingTargers', function () {
+        eventQueue.bind('Farm/startLoadingTargers', function () {
             $status.html(Locale('farm', 'events.loadingTargets'))
         })
 
-        Farm.bind('endLoadingTargers', function () {
+        eventQueue.bind('Farm/endLoadingTargers', function () {
             $status.html(Locale('farm', 'events.analyseTargets'))
         })
 
-        Farm.bind('attacking', function () {
+        eventQueue.bind('Farm/attacking', function () {
             $status.html(Locale('farm', 'events.attacking'))
         })
 
-        Farm.bind('commandLimitSingle', function () {
+        eventQueue.bind('Farm/commandLimitSingle', function () {
             $status.html(Locale('farm', 'events.commandLimit'))
         })
 
-        Farm.bind('commandLimitMulti', function () {
+        eventQueue.bind('Farm/commandLimitMulti', function () {
             $status.html(Locale('farm', 'events.noVillages'))
         })
 
-        Farm.bind('resetEvents', function () {
+        eventQueue.bind('Farm/resetEvents', function () {
             eventsCount = 0
             populateEvents()
         })
 
-        Farm.bind('groupsChanged', function () {
+        eventQueue.bind('Farm/groupsChanged', function () {
             updateGroupList()
         })
 
-        Farm.bind('presetsLoaded', function () {
+        eventQueue.bind('Farm/presetsLoaded', function () {
             updatePresetList()
         })
 
-        Farm.bind('presetsChange', function () {
+        eventQueue.bind('Farm/presetsChange', function () {
             updatePresetList()
         })
 
-        Farm.bind('start', function () {
+        eventQueue.bind('Farm/start', function () {
             $start.html(Locale('common', 'pause'))
             $start.removeClass('btn-green').addClass('btn-red')
             opener.$elem.removeClass('btn-green').addClass('btn-red')
         })
 
-        Farm.bind('pause', function () {
+        eventQueue.bind('Farm/pause', function () {
             $start.html(Locale('common', 'start'))
             $start.removeClass('btn-red').addClass('btn-green')
             opener.$elem.removeClass('btn-red').addClass('btn-green')
         })
 
-        Farm.bind('settingError', function (key, replaces) {
+        eventQueue.bind('Farm/settingError', function (key, replaces) {
             var localeKey = 'settingError.' + key
 
             utils.emitNotif('error', Locale('farm', localeKey, replaces))

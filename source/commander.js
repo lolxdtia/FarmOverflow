@@ -2,7 +2,11 @@ define('TWOverflow/Farm/Commander', [
     'TWOverflow/Farm',
     'TWOverflow/utils',
     'helper/math'
-], function (Farm, utils, $math) {
+], function (
+    Farm,
+    utils,
+    $math
+) {
     /**
      * Controla os ciclos de comandos, enviando ataques, alternando
      * aldeias e alvos.
@@ -46,13 +50,13 @@ define('TWOverflow/Farm/Commander', [
 
         if (!Farm.getSelectedPresets().length) {
             Farm.stop()
-            Farm.trigger('noPreset')
+            Farm.eventQueueTrigger('Farm/noPreset')
 
             return
         }
 
         if (!Farm.hasVillage()) {
-            return Farm.trigger('noVillageSelected')
+            return Farm.eventQueueTrigger('Farm/noVillageSelected')
         }
 
         var selectedVillage = Farm.getSelectedVillage()
@@ -69,7 +73,7 @@ define('TWOverflow/Farm/Commander', [
             if (Farm.nextVillage()) {
                 self.analyse()
             } else {
-                Farm.trigger(Farm.getLastError())
+                Farm.eventQueueTrigger(Farm.getLastError())
             }
 
             return
@@ -91,7 +95,7 @@ define('TWOverflow/Farm/Commander', [
             if (Farm.nextVillage()) {
                 self.analyse()
             } else {
-                Farm.trigger('noTargets')
+                Farm.eventQueueTrigger('Farm/noTargets')
             }
 
             return
@@ -133,12 +137,12 @@ define('TWOverflow/Farm/Commander', [
 
             break
         case 'noUnits':
-            Farm.trigger('noUnits', [selectedVillage])
+            Farm.eventQueueTrigger('Farm/noUnits', [selectedVillage])
             Farm.setWaitingVillages(sid)
 
             if (Farm.isSingleVillage()) {
                 if (selectedVillage.countCommands() === 0) {
-                    Farm.trigger('noUnitsNoCommands')
+                    Farm.eventQueueTrigger('Farm/noUnitsNoCommands')
                 } else {
                     Farm.setGlobalWaiting()
 
@@ -167,11 +171,11 @@ define('TWOverflow/Farm/Commander', [
                     return Farm.cycle.end()
                 }
 
-                return Farm.trigger('commandLimitSingle', [selectedVillage])
+                return Farm.eventQueueTrigger('Farm/commandLimitSingle', [selectedVillage])
             }
 
             if (Farm.isAllWaiting()) {
-                Farm.trigger('commandLimitMulti', [selectedVillage])
+                Farm.eventQueueTrigger('Farm/commandLimitMulti', [selectedVillage])
 
                 return Farm.setGlobalWaiting()
             }
@@ -359,7 +363,7 @@ define('TWOverflow/Farm/Commander', [
                 return false
             }
 
-            Farm.trigger('sendCommand', [
+            Farm.eventQueueTrigger('Farm/sendCommand', [
                 selectedVillage,
                 Farm.getSelectedTarget()
             ])
@@ -388,7 +392,7 @@ define('TWOverflow/Farm/Commander', [
                 return false
             }
 
-            Farm.trigger('sendCommandError', [data.code])
+            Farm.eventQueueTrigger('Farm/sendCommandError', [data.code])
 
             unbind()
             callback()
