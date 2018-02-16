@@ -672,7 +672,11 @@ define('TWOverflow/Farm/interface', [
         updateSelectedVillage()
         updateLastAttack()
         populateEvents()
+
+        return ui
     }
 
-    Farm.interface = FarmInterface
+    Farm.interface = function () {
+        Farm.interface = FarmInterface()
+    }
 })
