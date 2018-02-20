@@ -73,7 +73,6 @@
     "settings.presetName":"Preset of troops",
     "settings.randomBase":"Random interval base (seconds)",
     "settings.ignoreOnLoss":"Add ignored group on targets that cause loss",
-    "settings.save":"Save settings",
     "settings.saved":"Settings saved!",
     "settings.presets":"Presets",
     "settings.security":"Security",
