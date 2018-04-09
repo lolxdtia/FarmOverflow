@@ -30,8 +30,6 @@
     "general.started":"FarmOverflow started.",
     "info.development1":"Development",
     "info.developedBy":"Developed by",
-    "info.notice1": "Notices",
-    "info.notice2": "FarmOverflow reached the mark of <b>100.000</b> attacks sended daily, thank you all.",
     "info.groupOnly1":"Using only villages from a group to attack",
     "info.groupOnly2":"You can select a specific group to use only the villages from that group to attack.",
     "info.ignore1":"Ignoring villages from a group",
