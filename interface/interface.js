@@ -398,7 +398,7 @@ define('TWOverflow/Farm/interface', [
             appendSelectData($data, {
                 name: presetName,
                 value: presetName,
-                icon: 'size-34x34 icon-26x26-preset'
+                icon: 'size-26x26 icon-26x26-preset'
             })
 
             loaded[presetName] = true
