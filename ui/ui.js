@@ -1,11 +1,11 @@
-define('TWOverflow/Farm/interface', [
-    'TWOverflow/Farm',
-    'TWOverflow/locale',
-    'TWOverflow/Interface',
-    'TWOverflow/Interface/buttonLink',
-    'TWOverflow/FrontButton',
-    'TWOverflow/utils',
-    'TWOverflow/eventQueue',
+define('two/farm/ui', [
+    'two/farm',
+    'two/locale',
+    'two/ui',
+    'two/ui/buttonLink',
+    'two/FrontButton',
+    'two/utils',
+    'two/eventQueue',
     'helper/time',
     'Lockr',
     'ejs'

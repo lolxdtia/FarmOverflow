@@ -1,6 +1,6 @@
-define('TWOverflow/Farm/Commander', [
-    'TWOverflow/Farm',
-    'TWOverflow/utils',
+define('two/farm/Commander', [
+    'two/farm',
+    'two/utils',
     'helper/math'
 ], function (
     Farm,

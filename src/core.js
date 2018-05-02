@@ -1,8 +1,8 @@
-define('TWOverflow/Farm', [
-    'TWOverflow/locale',
-    'TWOverflow/Farm/Village',
-    'TWOverflow/utils',
-    'TWOverflow/eventQueue',
+define('two/farm', [
+    'two/locale',
+    'two/farm/Village',
+    'two/utils',
+    'two/eventQueue',
     'helper/math',
     'conf/conf',
     'struct/MapData',
@@ -1984,7 +1984,7 @@ define('TWOverflow/Farm', [
      * @return {Commander}
      */
     Farm.createCommander = function () {
-        var Commander = require('TWOverflow/Farm/Commander')
+        var Commander = require('two/farm/Commander')
 
         return new Commander()
     }

@@ -1,8 +1,8 @@
-define('TWOverflow/Farm/singleCycle', [
-    'TWOverflow/Farm',
-    'TWOverflow/locale',
-    'TWOverflow/utils',
-    'TWOverflow/eventQueue'
+define('two/farm/singleCycle', [
+    'two/farm',
+    'two/locale',
+    'two/utils',
+    'two/eventQueue'
 ], function (
     Farm,
     Locale,

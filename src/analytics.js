@@ -1,6 +1,6 @@
-define('TWOverflow/Farm/analytics', [
-    'TWOverflow/Farm',
-    'TWOverflow/eventQueue',
+define('two/farm/analytics', [
+    'two/farm',
+    'two/eventQueue',
     'Lockr'
 ], function (Farm, eventQueue, Lockr) {
     Farm.analytics = function () {
