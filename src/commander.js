@@ -147,7 +147,7 @@ define('two/farm/Commander', [
                     Farm.setGlobalWaiting()
 
                     if (Farm.settings.singleCycle) {
-                        Farm.cycle.end()
+                        Farm.cycle.endStep()
                     }
                 }
 
@@ -168,7 +168,7 @@ define('two/farm/Commander', [
                 Farm.setGlobalWaiting()
 
                 if (Farm.settings.singleCycle) {
-                    return Farm.cycle.end()
+                    return Farm.cycle.endStep()
                 }
 
                 return Farm.eventQueueTrigger('Farm/commandLimitSingle', [selectedVillage])

@@ -1,4 +1,4 @@
-define('two/farm/singleCycle', [
+define('two/farm/cycle', [
     'two/farm',
     'two/locale',
     'two/utils',
@@ -38,6 +38,34 @@ define('two/farm/singleCycle', [
     }
 
     /**
+     * Inicia o ciclo de ataques utilizando todas aldeias aldeias disponíveis.
+     */
+    cycle.startContinuous = function () {
+        Farm.commander = Farm.createCommander()
+        Farm.commander.running = true
+
+        Farm.eventQueueTrigger('Farm/start')
+
+        if (Farm.isNotifsEnabled()) {
+            utils.emitNotif('success', Locale('farm', 'general.started'))
+        }
+
+        if (Farm.getFreeVillages().length === 0) {
+            if (Farm.isSingleVillage()) {
+                Farm.eventQueueTrigger('Farm/noUnits')
+            } else {
+                Farm.eventQueueTrigger('Farm/noVillages')
+            }
+
+            return
+        }
+
+        Farm.setLeftVillages(Farm.getFreeVillages())
+
+        Farm.commander.analyse()
+    }
+
+    /**
      * Inicia um ciclo de ataques utilizando todas aldeias aldeias
      * disponíveis apenas uma vez.
      *
@@ -45,7 +73,7 @@ define('two/farm/singleCycle', [
      *   automaticamente depois do intervalo especificado nas
      *   configurações.
      */
-    cycle.start = function (autoInit) {
+    cycle.startStep = function (autoInit) {
         Farm.commander = Farm.createCommander()
         Farm.commander.running = true
 
@@ -85,7 +113,7 @@ define('two/farm/singleCycle', [
     /**
      * Lida com o final de um ciclo.
      */
-    cycle.end = function () {
+    cycle.endStep = function () {
         if (cycle.intervalEnabled()) {
             Farm.eventQueueTrigger('Farm/singleCycleNext')
             cycle.setNextCycle()
@@ -108,7 +136,7 @@ define('two/farm/singleCycle', [
         var interval = cycle.getInterval()
 
         timeoutId = setTimeout(function () {
-            cycle.start(true /*autoInit*/)
+            cycle.startStep(true /*autoInit*/)
         }, interval)
     }
 
@@ -129,7 +157,7 @@ define('two/farm/singleCycle', [
                 return cycle.nextVillage()
             }
         } else {
-            return cycle.end()
+            return cycle.endStep()
         }
 
         Farm.setSelectedVillage(next)

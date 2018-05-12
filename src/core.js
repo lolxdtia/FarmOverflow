@@ -1334,9 +1334,9 @@ define('two/farm', [
         }
 
         if (Farm.settings.singleCycle) {
-            Farm.cycle.start(autoInit)
+            Farm.cycle.startStep(autoInit)
         } else {
-            initNormalCycle()
+            Farm.cycle.startContinuous()
         }
 
         Farm.updateActivity()
@@ -1678,31 +1678,6 @@ define('two/farm', [
         return load()
     }
 
-    var initNormalCycle = function () {
-        Farm.commander = Farm.createCommander()
-        Farm.commander.running = true
-
-        Farm.eventQueueTrigger('Farm/start')
-
-        if (notifsEnabled) {
-            utils.emitNotif('success', Locale('farm', 'general.started'))
-        }
-
-        if (getFreeVillages().length === 0) {
-            if (singleVillage) {
-                Farm.eventQueueTrigger('Farm/noUnits')
-            } else {
-                Farm.eventQueueTrigger('Farm/noVillages')
-            }
-
-            return
-        }
-
-        leftVillages = getFreeVillages()
-
-        Farm.commander.analyse()
-    }
-
     /**
      * Seleciona a próxima aldeia do jogador.
      *
@@ -2005,6 +1980,13 @@ define('two/farm', [
         if (eventsEnabled) {
             eventQueue.trigger(event, args)
         }
+    }
+
+    /**
+     * @param {Array} villages - Lista de aldeias restantes no ciclo.
+     */
+    Farm.setLeftVillages = function (villages) {
+        leftVillages = villages
     }
 
     // Funções públicas

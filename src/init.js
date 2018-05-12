@@ -3,7 +3,7 @@ require([
     'two/farm',
     'two/farm/ui',
     'two/farm/analytics',
-    'two/farm/singleCycle'
+    'two/farm/cycle'
 ], function (
     ready,
     Farm
