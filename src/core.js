@@ -1077,8 +1077,8 @@ define('two/farm', [
                 return true
             }
 
-            var resources = village.getResources()
-            var maxStorage = village.getMaxStorage()
+            var resources = village.original.data.resources
+            var maxStorage = village.original.data.storage
 
             var isFull = ['wood', 'clay', 'iron'].every(function (res) {
                 return resources[res] === maxStorage

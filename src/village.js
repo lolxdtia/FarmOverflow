@@ -100,13 +100,5 @@ define('two/farm/Village', [
         })
     }
 
-    Village.prototype.getResources = function () {
-        return this.original.getResources().getData().resources
-    }
-
-    Village.prototype.getMaxStorage = function () {
-        return this.original.getResources().getData().maxStorage
-    }
-
     return Village
 })
