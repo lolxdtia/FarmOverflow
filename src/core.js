@@ -706,13 +706,28 @@ define('two/farm', [
      */
     var generalListeners = function () {
         /**
-         * Remove aldeias da lista de espera e detecta se todas as aldeias
-         * estavam na lista de espera, reiniciando o ciclo de ataques.
-         *
-         * @param  {Object} data - Dados do comando.
+         * Detecta quando a conexão é reestabelecida, podendo
+         * reiniciar o script.
          */
-        var commandBackHandler = function (_, data) {
-            var vid = data.origin.id
+        var reconnectHandler = function () {
+            if (Farm.commander.running) {
+                setTimeout(function () {
+                    disableNotifs(function () {
+                        Farm.stop()
+                        Farm.start()
+                    })
+                }, 5000)
+            }
+        }
+
+        /**
+         * Detecta mudanças na quantidade de tropas nas aldeias e remove
+         * a aldeia da lista de espera caso esteja.
+         *
+         * @param  {Object} data - Contém id da aldeia afetada.
+         */
+        var armyChangeHandler = function (_, data) {
+            var vid = data.village_id
 
             if (waitingVillages[vid]) {
                 delete waitingVillages[vid]
@@ -737,23 +752,8 @@ define('two/farm', [
             }
         }
 
-        /**
-         * Detecta quando a conexão é reestabelecida, podendo
-         * reiniciar o script.
-         */
-        var reconnectHandler = function () {
-            if (Farm.commander.running) {
-                setTimeout(function () {
-                    disableNotifs(function () {
-                        Farm.stop()
-                        Farm.start()
-                    })
-                }, 5000)
-            }
-        }
-
-        rootScope.$on(eventTypeProvider.COMMAND_RETURNED, commandBackHandler)
         rootScope.$on(eventTypeProvider.RECONNECT, reconnectHandler)
+        rootScope.$on(eventTypeProvider.VILLAGE_ARMY_CHANGED, armyChangeHandler)
     }
 
     /**
