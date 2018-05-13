@@ -42,10 +42,9 @@ define('two/farm/Village', [
     Village.prototype.countCommands = function () {
         var commands = this.original.getCommandListModel()
 
-        var outgoing = commands.getOutgoingCommands(true).length
-        var incoming = commands.getIncomingCommands(true).length
-
-        return outgoing + incoming
+        // commands.getOutgoingCommands(true) obtem a lista de comandos
+        // com exceção dos comandos de espionagem.
+        return commands.getOutgoingCommands(true).length
     }
 
     Village.prototype.updateCommands = function (callback) {
