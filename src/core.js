@@ -607,10 +607,7 @@ define('two/farm', [
             case 'start':
             case 'init':
             case 'begin':
-                disableNotifs(function () {
-                    Farm.stop()
-                    Farm.start()
-                })
+                Farm.restart()
 
                 sendMessageReply(data.message_id, genStatusReply())
                 Farm.eventQueueTrigger('Farm/remoteCommand', ['on'])
@@ -654,8 +651,15 @@ define('two/farm', [
             updatePresets()
             Farm.eventQueueTrigger('Farm/presetsChange')
 
-            if (!selectedPresets.length) {
-                if (Farm.commander.running) {
+            if (Farm.commander.running) {
+                var hasPresets = !!selectedPresets.length
+
+                if (hasPresets) {
+                    if (Farm.getGlobalWaiting()) {
+                        resetWaitingVillages()
+                        Farm.restart()
+                    }
+                } else {
                     Farm.eventQueueTrigger('Farm/noPreset')
                     Farm.stop()
                 }
@@ -712,10 +716,7 @@ define('two/farm', [
         var reconnectHandler = function () {
             if (Farm.commander.running) {
                 setTimeout(function () {
-                    disableNotifs(function () {
-                        Farm.stop()
-                        Farm.start()
-                    })
+                    Farm.restart()
                 }, 5000)
             }
         }
@@ -1364,6 +1365,16 @@ define('two/farm', [
     }
 
     /**
+     * Para e re-inicia sem emitir notificação.
+     */
+    Farm.restart = function () {
+        disableNotifs(function () {
+            Farm.stop()
+            Farm.start()
+        })
+    }
+
+    /**
      * Alterna entre iniciar e pausar o script.
      */
     Farm.switch = function () {
@@ -1449,10 +1460,7 @@ define('two/farm', [
 
         if (Farm.commander.running) {
             disableEvents(function () {
-                disableNotifs(function () {
-                    Farm.stop()
-                    Farm.start()
-                })
+                Farm.restart()
             })
         }
 
