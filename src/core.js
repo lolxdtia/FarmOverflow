@@ -256,21 +256,21 @@ define('two/farm', [
     var mapFilters = [
         // IDs negativos são localizações reservadas para os jogadores como
         // segunda aldeia em construção, convidar um amigo e deposito de recursos.
-        function (target) {
+        function nonVillages(target) {
             if (target.id < 0) {
                 return true
             }
         },
 
         // Aldeia do próprio jogador
-        function (target) {
+        function ownPlayer(target) {
             if (target.character_id === $player.getId()) {
                 return true
             }
         },
 
         // Impossivel atacar alvos protegidos
-        function (target) {
+        function protectedVillage(target) {
             if (target.attack_protection) {
                 return true
             }
@@ -278,7 +278,7 @@ define('two/farm', [
 
         // Aldeias de jogadores são permitidas caso estejam
         // no grupo de incluidas.
-        function (target) {
+        function includedVillage(target) {
             if (target.character_id) {
                 var included = includedVillages.includes(target.id)
 
@@ -289,7 +289,7 @@ define('two/farm', [
         },
 
         // Filtra aldeias pela pontuação
-        function (target) {
+        function villagePoints(target) {
             if (target.points < Farm.settings.minPoints) {
                 return true
             }
@@ -300,7 +300,7 @@ define('two/farm', [
         },
 
         // Filtra aldeias pela distância
-        function (target) {
+        function villageDistance(target) {
             var coords = selectedVillage.position
             var distance = $math.actualDistance(coords, target)
 
@@ -418,7 +418,7 @@ define('two/farm', [
             }
         }
 
-        Farm.eventQueueTrigger('Farm/villagesUpdate')
+        Farm.triggerEvent('Farm/villagesUpdate')
     }
 
     /**
@@ -463,7 +463,7 @@ define('two/farm', [
             update(modelDataService.getPresetList().getPresets())
         } else {
             socketService.emit(routeProvider.GET_PRESETS, {}, function (data) {
-                Farm.eventQueueTrigger('Farm/presetsLoaded')
+                Farm.triggerEvent('Farm/presets/loaded')
                 update(data.presets)
             })
         }
@@ -517,7 +517,7 @@ define('two/farm', [
 
                 priorityTargets[vid].push(tid)
 
-                Farm.eventQueueTrigger('Farm/priorityTargetAdded', [{
+                Farm.triggerEvent('Farm/priorityTargetAdded', [{
                     id: tid,
                     name: attack.defVillageName,
                     x: attack.defVillageX,
@@ -610,25 +610,25 @@ define('two/farm', [
                 Farm.restart()
 
                 sendMessageReply(data.message_id, genStatusReply())
-                Farm.eventQueueTrigger('Farm/remoteCommand', ['on'])
+                Farm.triggerEvent('Farm/remoteCommand', ['on'])
 
                 break
             case 'off':
             case 'stop':
             case 'pause':
             case 'end':
-                disableNotifs(function () {
-                    Farm.stop()
+                Farm.tempDisableNotifs(function () {
+                    Farm.pause()
                 })
 
                 sendMessageReply(data.message_id, genStatusReply())
-                Farm.eventQueueTrigger('Farm/remoteCommand', ['off'])
+                Farm.triggerEvent('Farm/remoteCommand', ['off'])
 
                 break
             case 'status':
             case 'current':
                 sendMessageReply(data.message_id, genStatusReply())
-                Farm.eventQueueTrigger('Farm/remoteCommand', ['status'])
+                Farm.triggerEvent('Farm/remoteCommand', ['status'])
 
                 break
             }
@@ -649,7 +649,7 @@ define('two/farm', [
          */
         var updatePresetsHandler = function () {
             updatePresets()
-            Farm.eventQueueTrigger('Farm/presetsChange')
+            Farm.triggerEvent('Farm/presets/change')
 
             if (Farm.commander.running) {
                 var hasPresets = !!selectedPresets.length
@@ -660,8 +660,8 @@ define('two/farm', [
                         Farm.restart()
                     }
                 } else {
-                    Farm.eventQueueTrigger('Farm/noPreset')
-                    Farm.stop()
+                    Farm.triggerEvent('Farm/noPreset')
+                    Farm.pause()
                 }
             }
         }
@@ -675,7 +675,7 @@ define('two/farm', [
             updateExceptionGroups()
             updateExceptionVillages()
 
-            Farm.eventQueueTrigger('Farm/groupsChanged')
+            Farm.triggerEvent('Farm/groupsChanged')
         }
 
         /**
@@ -737,7 +737,7 @@ define('two/farm', [
                 if (globalWaiting) {
                     globalWaiting = false
 
-                    if (Farm.settings.singleCycle) {
+                    if (Farm.settings.stepCycle) {
                         return false
                     }
 
@@ -775,7 +775,7 @@ define('two/farm', [
                 if (globalWaiting) {
                     globalWaiting = false
 
-                    if (Farm.settings.singleCycle) {
+                    if (Farm.settings.stepCycle) {
                         return false
                     }
 
@@ -788,7 +788,7 @@ define('two/farm', [
                 var village = getVillageById(vid)
 
                 if (Farm.isFullStorage(village)) {
-                    Farm.setWaitingVillages(vid, 'fullStorage')
+                    Farm.setWaitingVillage(vid, 'fullStorage')
                 }
             }
         }
@@ -828,45 +828,45 @@ define('two/farm', [
             currentStatus = 'paused'
         })
 
-        eventQueue.bind('Farm/startLoadingTargers', function () {
+        eventQueue.bind('Farm/loadingTargets/start', function () {
             currentStatus = 'loadingTargets'
         })
 
-        eventQueue.bind('Farm/endLoadingTargers', function () {
+        eventQueue.bind('Farm/loadingTargets/end', function () {
             currentStatus = 'analyseTargets'
         })
 
-        eventQueue.bind('Farm/commandLimitSingle', function () {
+        eventQueue.bind('Farm/commandLimit/single', function () {
             currentStatus = 'commandLimit'
         })
 
-        eventQueue.bind('Farm/commandLimitMulti', function () {
+        eventQueue.bind('Farm/commandLimit/multi', function () {
             currentStatus = 'noVillages'
         })
 
-        eventQueue.bind('Farm/singleCycleEnd', function () {
-            currentStatus = 'singleCycleEnd'
+        eventQueue.bind('Farm/stepCycle/end', function () {
+            currentStatus = 'stepCycle/end'
 
-            if (notifsEnabled && Farm.settings.singleCycleNotifs) {
-                utils.emitNotif('error', Locale('farm', 'events.singleCycleEnd'))
+            if (notifsEnabled && Farm.settings.stepCycleNotifs) {
+                utils.emitNotif('error', Locale('farm', 'events.stepCycle/end'))
             }
         })
 
-        eventQueue.bind('Farm/singleCycleEndNoVillages', function () {
-            currentStatus = 'singleCycleEndNoVillages'
+        eventQueue.bind('Farm/stepCycle/end/noVillages', function () {
+            currentStatus = 'stepCycle/end/noVillages'
 
             if (notifsEnabled) {
-                utils.emitNotif('error', Locale('farm', 'events.singleCycleEndNoVillages'))
+                utils.emitNotif('error', Locale('farm', 'events.stepCycle/end/noVillages'))
             }
         })
 
-        eventQueue.bind('Farm/singleCycleNext', function () {
-            currentStatus = 'singleCycleNext'
+        eventQueue.bind('Farm/stepCycle/next', function () {
+            currentStatus = 'stepCycle/next'
 
-            if (notifsEnabled && Farm.settings.singleCycleNotifs) {
+            if (notifsEnabled && Farm.settings.stepCycleNotifs) {
                 var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
-                utils.emitNotif('success', Locale('farm', 'events.singleCycleNext', {
+                utils.emitNotif('success', Locale('farm', 'events.stepCycle/next', {
                     time: utils.formatDate(next)
                 }))
             }
@@ -883,24 +883,6 @@ define('two/farm', [
     var updateLastAttack = function () {
         lastAttack = $timeHelper.gameTime()
         Lockr.set('farm-lastAttack', lastAttack)
-    }
-
-    /**
-     * Desativa o disparo de eventos temporariamente.
-     */
-    var disableEvents = function (callback) {
-        eventsEnabled = false
-        callback()
-        eventsEnabled = true
-    }
-
-    /**
-     * Desativa o disparo de eventos temporariamente.
-     */
-    var disableNotifs = function (callback) {
-        notifsEnabled = false
-        callback()
-        notifsEnabled = true
     }
 
     /**
@@ -960,7 +942,7 @@ define('two/farm', [
             group_id: groupIgnore.id,
             village_id: target.id
         }, function () {
-            Farm.eventQueueTrigger('Farm/ignoredVillage', [target])
+            Farm.triggerEvent('Farm/ignoredVillage', [target])
         })
     }
 
@@ -1012,7 +994,7 @@ define('two/farm', [
                 // entre os ciclos + 1 minuto para que não tenha
                 // o problema de reiniciar os ataques enquanto
                 // o intervalo ainda não acabou.
-                if (Farm.settings.singleCycle && Farm.cycle.intervalEnabled()) {
+                if (Farm.settings.stepCycle && Farm.cycle.intervalEnabled()) {
                     toleranceTime += Farm.cycle.getInterval() + (1000 * 60)
                 }
 
@@ -1020,8 +1002,8 @@ define('two/farm', [
                 var passedTime = gameTime - lastAttack
 
                 if (passedTime > toleranceTime) {
-                    disableNotifs(function () {
-                        Farm.stop()
+                    Farm.tempDisableNotifs(function () {
+                        Farm.pause()
                         Farm.start(true /*autoInit*/)
                     })
                 }
@@ -1079,7 +1061,7 @@ define('two/farm', [
 
         var statusReplaces = {}
 
-        if (currentStatus === 'singleCycleNext') {
+        if (currentStatus === 'stepCycle/next') {
             var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
             statusReplaces.time = utils.formatDate(next)
@@ -1109,7 +1091,7 @@ define('two/farm', [
     var isExpiredData = function () {
         var now = $timeHelper.gameTime()
 
-        if (Farm.settings.singleCycle && Farm.cycle.intervalEnabled()) {
+        if (Farm.settings.stepCycle && Farm.cycle.intervalEnabled()) {
             if (now > (lastActivity + Farm.cycle.getInterval() + (60 * 1000))) {
                 return true
             }
@@ -1121,18 +1103,105 @@ define('two/farm', [
     }
 
     /**
-     * Obtem a lista de aldeias disponíveis para atacar
+     * Carrega setores de aldeias diretamente do mapa do jogo.
      *
-     * @return {Array} Lista de aldeias disponíveis.
+     * @param {Number} x - X-coord.
+     * @param {Number} y - Y-coord.
+     * @param {Number} w - Width.
+     * @param {Number} h - Height.
+     * @param {Function} callback - Chamado quando todos setores carregarem.
      */
-    var getFreeVillages = function () {
-        return playerVillages.filter(function (village) {
-            if (waitingVillages[village.id]) {
-                return false
-            }
+    var loadMapSectors = function (x, y, w, h, chunk, callback) {
+        if ($mapData.hasTownDataInChunk(x, y)) {
+            var sectors = $mapData.loadTownData(x, y, w, h, chunk)
 
-            return true
+            return callback(sectors)
+        }
+
+        Farm.triggerEvent('Farm/loadingTargets/start')
+
+        var loads = $convert.scaledGridCoordinates(x, y, w, h, chunk)
+        var length = loads.length
+        var index = 0
+
+        $mapData.loadTownDataAsync(x, y, w, h, function () {
+            if (++index === length) {
+                Farm.triggerEvent('Farm/loadingTargets/end')
+                var sectors = $mapData.loadTownData(x, y, w, h, chunk)
+
+                callback(sectors)
+            }
         })
+    }
+
+    /**
+     * Transforma dados bruto dos setores do mapa em um Array
+     * com todas aldeias.
+     *
+     * @param {Number} sectors - Setores carregados do mapa.
+     * @return {Array} Array com todas aldeias dos setores.
+     */
+    var listTargets = function (sectors) {
+        var i = sectors.length
+        var villages = []
+
+        while (i--) {
+            var sector = sectors[i]
+            var sectorDataX = sector.data
+
+            for (var sx in sectorDataX) {
+                var sectorDataY = sectorDataX[sx]
+
+                for (var sy in sectorDataY) {
+                    var village = sectorDataY[sy]
+                    villages.push(village)
+                }
+            }
+        }
+
+        return villages
+    }
+
+    /**
+     * Filtra as aldeas de acordo com funções listadas em mapFilters.
+     *
+     * @param {Array} targets - Lista de aldeias a serem filtradas.
+     * @return {Array} Array com aldeias filtradas.
+     */
+    var filterTargets = function (targets) {
+        return targets.filter(function (target) {
+            return mapFilters.every(function (fn) {
+                return !fn(target)
+            })
+        })
+    }
+
+    /**
+     * Transforma as aldeias em objetos apenas com os dados necessarios
+     * para o funcionamento do FarmOverflow.
+     *
+     * @param {Array} targets - Lista de aldeias a serem processadas.
+     * @return {Array} Array com aldeias processadas.
+     */
+    var processTargets = function (targets) {
+        var processedTargets = []
+        var origin = selectedVillage.position
+        var target
+
+        for (var i = 0; i < targets.length; i++) {
+            target = targets[i]
+            
+            processedTargets.push({
+                x: target.x,
+                y: target.y,
+                distance: $math.actualDistance(origin, target),
+                id: target.id,
+                name: target.name,
+                pid: target.character_id
+            })
+        }
+
+        return processedTargets
     }
 
     var Farm = {}
@@ -1275,30 +1344,30 @@ define('two/farm', [
                 updates: [],
                 inputType: 'text'
             },
-            singleCycle: {
+            stepCycle: {
                 default: false,
                 updates: ['villages'],
                 inputType: 'checkbox'
             },
-            singleCycleNotifs: {
+            stepCycleNotifs: {
                 default: false,
                 updates: [],
                 inputType: 'checkbox'
             },
-            singleCycleInterval: {
+            stepCycleInterval: {
                 default: '00:00:00',
                 updates: [],
                 inputType: 'text',
                 pattern: /\d{1,2}\:\d{2}\:\d{2}/
             },
-            maxAttacksPerVillage: {
+            commandsPerVillage: {
                 default: 48,
                 updates: [],
                 inputType: 'text',
                 min: 1,
                 max: 50
             },
-            ignoreFullRes: {
+            ignoreFullStorage: {
                 default: true,
                 updates: ['fullStorage'],
                 inputType: 'checkbox'
@@ -1357,7 +1426,9 @@ define('two/farm', [
     Farm.start = function (autoInit) {
         if (!selectedPresets.length) {
             if (!autoInit && notifsEnabled) {
-                utils.emitNotif('error', Locale('farm', 'events.presetFirst'))
+                utils.emitNotif('error',
+                    Locale('farm', 'events.presetFirst')
+                )
             }
 
             return false
@@ -1365,7 +1436,9 @@ define('two/farm', [
 
         if (!selectedVillage) {
             if (!autoInit && notifsEnabled) {
-                utils.emitNotif('error', Locale('farm', 'events.noSelectedVillage'))
+                utils.emitNotif('error',
+                    Locale('farm', 'events.noSelectedVillage')
+                )
             }
 
             return false
@@ -1376,7 +1449,7 @@ define('two/farm', [
             targetIndexes = {}
         }
 
-        if (Farm.settings.singleCycle) {
+        if (Farm.settings.stepCycle) {
             Farm.cycle.startStep(autoInit)
         } else {
             Farm.cycle.startContinuous()
@@ -1392,12 +1465,12 @@ define('two/farm', [
      *
      * @return {Boolean}
      */
-    Farm.stop = function () {
+    Farm.pause = function () {
         clearTimeout(Farm.commander.timeoutId)
         clearTimeout(Farm.cycle.getTimeoutId())
 
         Farm.commander.running = false
-        Farm.eventQueueTrigger('Farm/pause')
+        Farm.triggerEvent('Farm/pause')
 
         if (notifsEnabled) {
             utils.emitNotif('success', Locale('common', 'paused'))
@@ -1410,8 +1483,8 @@ define('two/farm', [
      * Para e re-inicia sem emitir notificação.
      */
     Farm.restart = function () {
-        disableNotifs(function () {
-            Farm.stop()
+        Farm.tempDisableNotifs(function () {
+            Farm.pause()
             Farm.start()
         })
     }
@@ -1421,7 +1494,7 @@ define('two/farm', [
      */
     Farm.switch = function () {
         if (Farm.commander.running) {
-            Farm.stop()
+            Farm.pause()
         } else {
             Farm.start()
         }
@@ -1454,13 +1527,13 @@ define('two/farm', [
 
             if (settingMap.hasOwnProperty('pattern')) {
                 if (!settingMap.pattern.test(newValue)) {
-                    Farm.eventQueueTrigger('Farm/settingError', [key])
+                    Farm.triggerEvent('Farm/settingError', [key])
 
                     return false
                 }
             } else if (settingMap.hasOwnProperty('min')) {
                 if (newValue < settingMap.min || newValue > settingMap.max) {
-                    Farm.eventQueueTrigger('Farm/settingError', [key, {
+                    Farm.triggerEvent('Farm/settingError', [key, {
                         min: settingMap.min,
                         max: settingMap.max
                     }])
@@ -1497,7 +1570,7 @@ define('two/farm', [
         }
 
         if (modify.events) {
-            Farm.eventQueueTrigger('Farm/resetEvents')
+            Farm.triggerEvent('Farm/resetEvents')
         }
 
         if (modify.fullStorage) {
@@ -1509,12 +1582,12 @@ define('two/farm', [
         }
 
         if (Farm.commander.running) {
-            disableEvents(function () {
+            Farm.tempDisableEvents(function () {
                 Farm.restart()
             })
         }
 
-        Farm.eventQueueTrigger('Farm/settingsChange', [modify])
+        Farm.triggerEvent('Farm/settingsChange', [modify])
 
         return true
     }
@@ -1547,6 +1620,7 @@ define('two/farm', [
                 for (var i = 0; i < villageTargets.length; i++) {
                     if (villageTargets[i].id === priorityId) {
                         selectedTarget = villageTargets[i]
+
                         return true
                     }
                 }
@@ -1564,7 +1638,7 @@ define('two/farm', [
             var target = villageTargets[index]
 
             if (ignoredVillages.includes(target.id)) {
-                Farm.eventQueueTrigger('Farm/ignoredTarget', [target])
+                Farm.triggerEvent('Farm/ignoredTarget', [target])
 
                 continue
             }
@@ -1616,105 +1690,39 @@ define('two/farm', [
      * Obtem a lista de alvos para a aldeia selecionada.
      */
     Farm.getTargets = function (callback) {
-        var coords = selectedVillage.position
+        var origin = selectedVillage.position
         var sid = selectedVillage.id
 
         if (sid in villagesTargets) {
             return callback()
         }
 
-        var filteredTargets = []
-
         // Carregando 25 campos a mais para preencher alguns setores
         // que não são carregados quando a aldeia se encontra na borda.
         var chunk = $conf.MAP_CHUNK_SIZE
-        var x = coords.x - chunk
-        var y = coords.y - chunk
+        var x = origin.x - chunk
+        var y = origin.y - chunk
         var w = chunk * 2
         var h = chunk * 2
 
-        var load = function () {
-            var loaded = $mapData.hasTownDataInChunk(x, y)
+        loadMapSectors(x, y, w, h, chunk, function (sectors) {
+            var listedTargets = listTargets(sectors)
+            var filteredTargets = filterTargets(listedTargets)
+            var processedTargets = processTargets(filteredTargets)
 
-            if (loaded) {
-                loop()
-            } else {
-                Farm.eventQueueTrigger('Farm/startLoadingTargers')
-
-                var loads = $convert.scaledGridCoordinates(x, y, w, h, chunk)
-                var length = loads.length
-                var index = 0
-
-                $mapData.loadTownDataAsync(x, y, w, h, function () {
-                    if (++index === length) {
-                        Farm.eventQueueTrigger('Farm/endLoadingTargers')
-
-                        loop()
-                    }
-                })
-            }
-
-            return
-        }
-
-        var loop = function () {
-            var sectors = $mapData.loadTownData(x, y, w, h, chunk)
-            var i = sectors.length
-
-            while (i--) {
-                var sector = sectors[i]
-                var sectorDataX = sector.data
-
-                for (var sx in sectorDataX) {
-                    var sectorDataY = sectorDataX[sx]
-
-                    for (var sy in sectorDataY) {
-                        var village = sectorDataY[sy]
-                        var pass = filter(village)
-
-                        if (pass) {
-                            filteredTargets.push(pass)
-                        }
-                    }
-                }
-            }
-
-            done()
-        }
-
-        var filter = function (target) {
-            var pass = mapFilters.every(function (fn) {
-                return !fn(target)
-            })
-
-            if (!pass) {
-                return false
-            }
-
-            return {
-                x: target.x,
-                y: target.y,
-                distance: $math.actualDistance(coords, target),
-                id: target.id,
-                name: target.name,
-                pid: target.character_id
-            }
-        }
-
-        var done = function () {
-            if (filteredTargets.length === 0) {
+            if (processedTargets.length === 0) {
                 var hasVillages = Farm.nextVillage()
 
                 if (hasVillages) {
                     Farm.getTargets(callback)
                 } else {
-                    Farm.eventQueueTrigger('Farm/noTargets')
+                    Farm.triggerEvent('Farm/noTargets')
                 }
 
                 return false
             }
 
-            villagesTargets[sid] = filteredTargets.sort(function (a, b) {
+            villagesTargets[sid] = processedTargets.sort(function (a, b) {
                 return a.distance - b.distance
             })
 
@@ -1731,9 +1739,7 @@ define('two/farm', [
             }
 
             callback()
-        }
-
-        return load()
+        })
     }
 
     /**
@@ -1746,20 +1752,20 @@ define('two/farm', [
             return false
         }
 
-        if (Farm.settings.singleCycle) {
+        if (Farm.settings.stepCycle) {
             return Farm.cycle.nextVillage()
         }
 
         var next = leftVillages.shift()
 
         if (next) {
-            var availVillage = getFreeVillages().some(function (freeVillage) {
+            var availVillage = Farm.getFreeVillages().some(function (freeVillage) {
                 return freeVillage.id === next.id
             })
 
             if (availVillage) {
                 selectedVillage = next
-                Farm.eventQueueTrigger('Farm/nextVillage', [selectedVillage])
+                Farm.triggerEvent('Farm/nextVillage', [selectedVillage])
                 Farm.updateActivity()
 
                 return true
@@ -1767,16 +1773,17 @@ define('two/farm', [
                 return Farm.nextVillage()
             }
         } else {
-            leftVillages = getFreeVillages()
+            leftVillages = Farm.getFreeVillages()
+
 
             if (leftVillages.length) {
                 return Farm.nextVillage()
             }
 
             if (singleVillage) {
-                Farm.eventQueueTrigger('Farm/noUnits')
+                Farm.triggerEvent('Farm/noUnits')
             } else {
-                Farm.eventQueueTrigger('Farm/noVillages')
+                Farm.triggerEvent('Farm/noVillages')
             }
 
             return false
@@ -1792,8 +1799,8 @@ define('two/farm', [
      */
     Farm.checkPresets = function (callback) {
         if (!selectedPresets.length) {
-            Farm.stop()
-            Farm.eventQueueTrigger('Farm/noPreset')
+            Farm.pause()
+            Farm.triggerEvent('Farm/noPreset')
 
             return false
         }
@@ -1926,8 +1933,17 @@ define('two/farm', [
      *
      * @return {Boolean}
      */
-    Farm.isNotifsEnabled = function () {
+    Farm.getNotifsEnabled = function () {
         return notifsEnabled
+    }
+
+    /**
+     * Retorna se os eventos do FarmOverflow estão ativados.
+     *
+     * @return {Boolean}
+     */
+    Farm.getEventsEnabled = function () {
+        return eventsEnabled
     }
 
     /**
@@ -1946,7 +1962,7 @@ define('two/farm', [
      * @param {String=} reason - Identificação do motivo pelo qual a aldeia
      * foi adicionada a lista de espera.
      */
-    Farm.setWaitingVillages = function (id, reason) {
+    Farm.setWaitingVillage = function (id, reason) {
         waitingVillages[id] = reason || true
     }
 
@@ -2034,15 +2050,6 @@ define('two/farm', [
     }
 
     /**
-     * Só executa um evento quando for permitido.
-     */
-    Farm.eventQueueTrigger = function (event, args) {
-        if (eventsEnabled) {
-            eventQueue.trigger(event, args)
-        }
-    }
-
-    /**
      * @param {Array} villages - Lista de aldeias restantes no ciclo.
      */
     Farm.setLeftVillages = function (villages) {
@@ -2067,9 +2074,47 @@ define('two/farm', [
         })
     }
 
-    // Funções públicas
-    Farm.getFreeVillages = getFreeVillages
-    Farm.disableNotifs = disableNotifs
+    /**
+     * Obtem a lista de aldeias disponíveis para atacar
+     *
+     * @return {Array} Lista de aldeias disponíveis.
+     */
+    Farm.getFreeVillages = function () {
+        return playerVillages.filter(function (village) {
+            if (waitingVillages[village.id]) {
+                return false
+            }
+
+            return true
+        })
+    }
+
+    /**
+     * Desativa o disparo de eventos temporariamente.
+     */
+    Farm.tempDisableNotifs = function (callback) {
+        notifsEnabled = false
+        callback()
+        notifsEnabled = true
+    }
+
+    /**
+     * Desativa o disparo de eventos temporariamente.
+     */
+    Farm.tempDisableEvents = function (callback) {
+        eventsEnabled = false
+        callback()
+        eventsEnabled = true
+    }
+
+    /**
+     * Só executa um evento quando for permitido.
+     */
+    Farm.triggerEvent = function (event, args) {
+        if (eventsEnabled) {
+            eventQueue.trigger(event, args)
+        }
+    }
 
     return Farm
 })

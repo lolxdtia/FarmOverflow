@@ -153,11 +153,11 @@
                         </tr>
                         <tr>
                             <td>
-                                <span class="ff-cell-fix"><#= locale("farm", "settings.maxAttacksPerVillage") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.maxAttacksPerVillage") #>">?</span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.commandsPerVillage") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.commandsPerVillage") #>">?</span>
                             </td>
                             <td>
-                                <input data-setting="maxAttacksPerVillage" type="number" class="textfield-border" min="0" max="50" required>
+                                <input data-setting="commandsPerVillage" type="number" class="textfield-border" min="0" max="50" required>
                             </td>
                         </tr>
                         <tr>
@@ -185,18 +185,18 @@
                         </tr>
                         <tr>
                             <td>
-                                <span class="ff-cell-fix"><#- locale("farm", "settings.ignoreFullRes") #></span>
+                                <span class="ff-cell-fix"><#- locale("farm", "settings.ignoreFullStorage") #></span>
                             </td>
                             <td>
-                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-ignoreFullRes">
-                                    <input id="settings-ignoreFullRes" type="checkbox" data-setting="ignoreFullRes">
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-ignoreFullStorage">
+                                    <input id="settings-ignoreFullStorage" type="checkbox" data-setting="ignoreFullStorage">
                                 </label>
                             </td>
                         </tr>
                     </tbody>
                 </table>
 
-                <h5 class="twx-section collapse"><#= locale("farm", "settings.singleCycleHeader") #></h5>
+                <h5 class="twx-section collapse"><#= locale("farm", "settings.stepCycle/header") #></h5>
                 <table class="tbl-border-light tbl-striped">
                     <colgroup>
                         <col width="50%">
@@ -205,32 +205,32 @@
                     <tbody>
                         <tr>
                             <td>
-                                <span class="ff-cell-fix"><#= locale("farm", "settings.singleCycle") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.singleCycle") #>">?</span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.stepCycle") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.stepCycle") #>">?</span>
                             </td>
                             <td>
-                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-singleCycle">
-                                    <input id="settings-singleCycle" type="checkbox" data-setting="singleCycle">
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-stepCycle">
+                                    <input id="settings-stepCycle" type="checkbox" data-setting="stepCycle">
                                 </label>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <span class="ff-cell-fix"><#= locale("farm", "settings.singleCycleNotifs") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.singleCycleNotifs") #>">?</span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.stepCycle/notifs") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.stepCycle/notifs") #>">?</span>
                             </td>
                             <td>
-                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-singleCycleNotifs">
-                                    <input id="settings-singleCycleNotifs" type="checkbox" data-setting="singleCycleNotifs">
+                                <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-stepCycle/notifs">
+                                    <input id="settings-stepCycle/notifs" type="checkbox" data-setting="stepCycleNotifs">
                                 </label>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <span class="ff-cell-fix"><#= locale("farm", "settings.singleCycleInterval") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.singleCycleInterval") #>">?</span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.stepCycle/interval") #></span>
+                                <span class="helper" tooltip="<#= locale("farm", "tooltip.stepCycle/interval") #>">?</span>
                             </td>
-                            <td><input data-setting="singleCycleInterval" type="text" class="textfield-border" placeholder="00:00:00"></td>
+                            <td><input data-setting="stepCycleInterval" type="text" class="textfield-border" placeholder="00:00:00"></td>
                         </tr>
                     </tbody>
                 </table>

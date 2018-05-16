@@ -21,11 +21,8 @@ define('two/farm/ui', [
     Lockr,
     ejs
 ) {
-    // Controlador de interface
     var ui
-    // Controlador do botão para abrir a janela da interface
     var opener
-    // Atalhos rapidos para os elementos da janela.
     var $window
     var $events
     var $last
@@ -454,20 +451,16 @@ define('two/farm/ui', [
 
     function FarmInterface () {
         groups = modelDataService.getGroupList().getGroups()
-
         disabled = Locale('farm', 'general.disabled')
-
-        // Valores a serem substituidos no template da janela
-        var replaces = {
-            version: Farm.version,
-            author: __overflow_author,
-            locale: Locale
-        }
 
         ui = new Interface('FarmOverflow', {
             activeTab: 'info',
             template: '__farm_html_window',
-            replaces: replaces,
+            replaces: {
+                version: Farm.version,
+                author: __overflow_author,
+                locale: Locale
+            },
             css: '__farm_css_style'
         })
 
@@ -583,22 +576,22 @@ define('two/farm/ui', [
             $status.html(Locale('farm', 'events.noVillages'))
         })
 
-        eventQueue.bind('Farm/singleCycleEnd', function () {
-            $status.html(Locale('farm', 'events.singleCycleEnd'))
+        eventQueue.bind('Farm/stepCycle/end', function () {
+            $status.html(Locale('farm', 'events.stepCycle/nnd'))
         })
 
-        eventQueue.bind('Farm/singleCycleNext', function () {
+        eventQueue.bind('Farm/stepCycle/next', function () {
             var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
-            $status.html(Locale('farm', 'events.singleCycleNext', {
+            $status.html(Locale('farm', 'events.stepCycle/next', {
                 time: utils.formatDate(next)
             }))
         })
 
-        eventQueue.bind('Farm/singleCycleNextNoVillages', function () {
+        eventQueue.bind('Farm/stepCycle/next/noVillages', function () {
             var next = $timeHelper.gameTime() + Farm.cycle.getInterval()
 
-            $status.html(Locale('farm', 'events.singleCycleNextNoVillages', {
+            $status.html(Locale('farm', 'events.stepCycle/next/noVillages', {
                 time: utils.formatDate(next)
             }))
         })
@@ -607,11 +600,11 @@ define('two/farm/ui', [
             updateSelectedVillage()
         })
 
-        eventQueue.bind('Farm/startLoadingTargers', function () {
+        eventQueue.bind('Farm/loadingTargets/start', function () {
             $status.html(Locale('farm', 'events.loadingTargets'))
         })
 
-        eventQueue.bind('Farm/endLoadingTargers', function () {
+        eventQueue.bind('Farm/loadingTargets/end', function () {
             $status.html(Locale('farm', 'events.analyseTargets'))
         })
 
@@ -619,11 +612,11 @@ define('two/farm/ui', [
             $status.html(Locale('farm', 'events.attacking'))
         })
 
-        eventQueue.bind('Farm/commandLimitSingle', function () {
+        eventQueue.bind('Farm/commandLimit/single', function () {
             $status.html(Locale('farm', 'events.commandLimit'))
         })
 
-        eventQueue.bind('Farm/commandLimitMulti', function () {
+        eventQueue.bind('Farm/commandLimit/multi', function () {
             $status.html(Locale('farm', 'events.noVillages'))
         })
 
@@ -636,11 +629,11 @@ define('two/farm/ui', [
             updateGroupList()
         })
 
-        eventQueue.bind('Farm/presetsLoaded', function () {
+        eventQueue.bind('Farm/presets/loaded', function () {
             updatePresetList()
         })
 
-        eventQueue.bind('Farm/presetsChange', function () {
+        eventQueue.bind('Farm/presets/change', function () {
             updatePresetList()
         })
 

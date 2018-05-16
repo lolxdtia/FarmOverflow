@@ -25,6 +25,11 @@ define('two/farm/cycle', [
      */
     var timeoutId = null
 
+    /**
+     * Objeto que será exportado.
+     *
+     * @type {Object}
+     */
     var cycle = {}
 
     /**
@@ -44,21 +49,21 @@ define('two/farm/cycle', [
         Farm.commander = Farm.createCommander()
         Farm.commander.running = true
 
-        Farm.eventQueueTrigger('Farm/start')
+        Farm.triggerEvent('Farm/start')
 
-        if (Farm.isNotifsEnabled()) {
+        if (Farm.getNotifsEnabled()) {
             utils.emitNotif('success', Locale('farm', 'general.started'))
         }
 
-        if (Farm.getFreeVillages().length === 0) {
+        if (!Farm.getFreeVillages().length) {
             if (Farm.isSingleVillage()) {
                 if (Farm.isFullStorage()) {
-                    Farm.eventQueueTrigger('Farm/fullStorage')
+                    Farm.triggerEvent('Farm/fullStorage')
                 } else {
-                    Farm.eventQueueTrigger('Farm/noUnits')
+                    Farm.triggerEvent('Farm/noUnits')
                 }
             } else {
-                Farm.eventQueueTrigger('Farm/noVillages')
+                Farm.triggerEvent('Farm/noVillages')
             }
 
             return
@@ -81,22 +86,22 @@ define('two/farm/cycle', [
         Farm.commander = Farm.createCommander()
         Farm.commander.running = true
 
-        Farm.disableNotifs(function () {
-            Farm.eventQueueTrigger('Farm/start')
+        Farm.tempDisableNotifs(function () {
+            Farm.triggerEvent('Farm/start')
         })
 
         var freeVillages = Farm.getFreeVillages()
 
         if (freeVillages.length === 0) {
             if (cycle.intervalEnabled()) {
-                Farm.eventQueueTrigger('Farm/singleCycleNextNoVillages')
+                Farm.triggerEvent('Farm/stepCycle/next/noVillages')
                 cycle.setNextCycle()
             } else {
                 // emit apenas uma notificação de erro
-                Farm.eventQueueTrigger('Farm/singleCycleEndNoVillages')
+                Farm.triggerEvent('Farm/stepCycle/next/noVillages')
 
-                Farm.disableNotifs(function () {
-                    Farm.stop()
+                Farm.tempDisableNotifs(function () {
+                    Farm.pause()
                 })
             }
 
@@ -104,8 +109,8 @@ define('two/farm/cycle', [
         }
 
         if (autoInit) {
-            eventQueue.bind('Farm/singleCycleRestart')
-        } else if (Farm.isNotifsEnabled()) {
+            eventQueue.bind('Farm/stepCycle/restart')
+        } else if (Farm.getNotifsEnabled()) {
             utils.emitNotif('success', Locale('farm', 'general.started'))
         }
 
@@ -119,13 +124,13 @@ define('two/farm/cycle', [
      */
     cycle.endStep = function () {
         if (cycle.intervalEnabled()) {
-            Farm.eventQueueTrigger('Farm/singleCycleNext')
+            Farm.triggerEvent('Farm/stepCycle/next')
             cycle.setNextCycle()
         } else {
-            Farm.eventQueueTrigger('Farm/singleCycleEnd')
+            Farm.triggerEvent('Farm/stepCycle/end')
 
-            Farm.disableNotifs(function () {
-                Farm.stop()
+            Farm.tempDisableNotifs(function () {
+                Farm.pause()
             })
         }
 
@@ -165,7 +170,7 @@ define('two/farm/cycle', [
         }
 
         Farm.setSelectedVillage(next)
-        Farm.eventQueueTrigger('Farm/nextVillage', [next])
+        Farm.triggerEvent('Farm/nextVillage', [next])
 
         return true
     }
@@ -178,7 +183,7 @@ define('two/farm/cycle', [
      *   seja válido, false caso seja uma string inválida.
      */
     cycle.getInterval = function () {
-        var interval = Farm.settings.singleCycleInterval
+        var interval = Farm.settings.stepCycleInterval
         var parseError = false
 
         if (!interval) {

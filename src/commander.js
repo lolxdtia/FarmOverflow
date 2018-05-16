@@ -49,14 +49,14 @@ define('two/farm/Commander', [
         }
 
         if (!Farm.getSelectedPresets().length) {
-            Farm.stop()
-            Farm.eventQueueTrigger('Farm/noPreset')
+            Farm.pause()
+            Farm.triggerEvent('Farm/noPreset')
 
             return
         }
 
         if (!Farm.hasVillage()) {
-            return Farm.eventQueueTrigger('Farm/noVillageSelected')
+            return Farm.triggerEvent('Farm/noVillageSelected')
         }
 
         var selectedVillage = Farm.getSelectedVillage()
@@ -73,13 +73,13 @@ define('two/farm/Commander', [
             if (Farm.nextVillage()) {
                 self.analyse()
             } else {
-                Farm.eventQueueTrigger(Farm.getLastError())
+                Farm.triggerEvent(Farm.getLastError())
             }
 
             return
         }
 
-        if (Farm.settings.ignoreFullRes && Farm.isFullStorage()) {
+        if (Farm.settings.ignoreFullStorage && Farm.isFullStorage()) {
             if (Farm.nextVillage()) {
                 self.analyse()
             } else {
@@ -105,14 +105,14 @@ define('two/farm/Commander', [
             if (Farm.nextVillage()) {
                 self.analyse()
             } else {
-                Farm.eventQueueTrigger('Farm/noTargets')
+                Farm.triggerEvent('Farm/noTargets')
             }
 
             return
         }
 
         Farm.checkPresets(function () {
-            if (selectedVillage.countCommands() >= Farm.settings.maxAttacksPerVillage) {
+            if (selectedVillage.countCommands() >= Farm.settings.commandsPerVillage) {
                 return self.handleError('commandLimit')
             }
 
@@ -147,16 +147,16 @@ define('two/farm/Commander', [
 
             break
         case 'noUnits':
-            Farm.eventQueueTrigger('Farm/noUnits', [selectedVillage])
-            Farm.setWaitingVillages(sid, 'units/commands')
+            Farm.triggerEvent('Farm/noUnits', [selectedVillage])
+            Farm.setWaitingVillage(sid, 'units/commands')
 
             if (Farm.isSingleVillage()) {
                 if (selectedVillage.countCommands() === 0) {
-                    Farm.eventQueueTrigger('Farm/noUnitsNoCommands')
+                    Farm.triggerEvent('Farm/noUnitsNoCommands')
                 } else {
                     Farm.setGlobalWaiting()
 
-                    if (Farm.settings.singleCycle) {
+                    if (Farm.settings.stepCycle) {
                         Farm.cycle.endStep()
                     }
                 }
@@ -172,22 +172,22 @@ define('two/farm/Commander', [
 
             break
         case 'commandLimit':
-            Farm.setWaitingVillages(sid, 'units/commands')
+            Farm.setWaitingVillage(sid, 'units/commands')
 
-            if (Farm.isSingleVillage()) {
+            var singleVillage = Farm.isSingleVillage()
+            var allWaiting = Farm.isAllWaiting()
+
+            if (singleVillage || allWaiting) {
+                var eventType = singleVillage
+                    ? 'Farm/commandLimit/single'
+                    : 'Farm/commandLimit/multi'
+
+                Farm.triggerEvent(eventType, [selectedVillage])
                 Farm.setGlobalWaiting()
 
-                if (Farm.settings.singleCycle) {
+                if (Farm.settings.stepCycle) {
                     return Farm.cycle.endStep()
                 }
-
-                return Farm.eventQueueTrigger('Farm/commandLimitSingle', [selectedVillage])
-            }
-
-            if (Farm.isAllWaiting()) {
-                Farm.eventQueueTrigger('Farm/commandLimitMulti', [selectedVillage])
-
-                return Farm.setGlobalWaiting()
             }
 
             Farm.nextVillage()
@@ -195,16 +195,16 @@ define('two/farm/Commander', [
 
             break
         case 'fullStorage':
-            Farm.setWaitingVillages(sid, 'fullStorage')
+            Farm.setWaitingVillage(sid, 'fullStorage')
 
             if (Farm.isSingleVillage()) {
                 Farm.setGlobalWaiting()
 
-                if (Farm.settings.singleCycle) {
+                if (Farm.settings.stepCycle) {
                     return Farm.cycle.endStep()
                 }
 
-                Farm.eventQueueTrigger('Farm/fullStorage')
+                Farm.triggerEvent('Farm/fullStorage')
             }
 
             break
@@ -387,7 +387,7 @@ define('two/farm/Commander', [
                 return false
             }
 
-            Farm.eventQueueTrigger('Farm/sendCommand', [
+            Farm.triggerEvent('Farm/sendCommand', [
                 selectedVillage,
                 Farm.getSelectedTarget()
             ])
@@ -416,7 +416,7 @@ define('two/farm/Commander', [
                 return false
             }
 
-            Farm.eventQueueTrigger('Farm/sendCommandError', [data.code])
+            Farm.triggerEvent('Farm/sendCommandError', [data.code])
 
             unbind()
             callback()
