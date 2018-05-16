@@ -79,6 +79,16 @@ define('two/farm/Commander', [
             return
         }
 
+        if (Farm.settings.ignoreFullRes && Farm.isFullStorage()) {
+            if (Farm.nextVillage()) {
+                self.analyse()
+            } else {
+                self.handleError('fullStorage')
+            }
+
+            return
+        }
+
         // Se aldeia ainda não tiver obtido a lista de alvos, obtem
         // os alvos e executa o comando novamente para dar continuidade.
         if (!Farm.targetsLoaded()) {
@@ -138,7 +148,7 @@ define('two/farm/Commander', [
             break
         case 'noUnits':
             Farm.eventQueueTrigger('Farm/noUnits', [selectedVillage])
-            Farm.setWaitingVillages(sid)
+            Farm.setWaitingVillages(sid, 'units/commands')
 
             if (Farm.isSingleVillage()) {
                 if (selectedVillage.countCommands() === 0) {
@@ -162,7 +172,7 @@ define('two/farm/Commander', [
 
             break
         case 'commandLimit':
-            Farm.setWaitingVillages(sid)
+            Farm.setWaitingVillages(sid, 'units/commands')
 
             if (Farm.isSingleVillage()) {
                 Farm.setGlobalWaiting()
@@ -182,6 +192,20 @@ define('two/farm/Commander', [
 
             Farm.nextVillage()
             this.analyse()
+
+            break
+        case 'fullStorage':
+            Farm.setWaitingVillages(sid, 'fullStorage')
+
+            if (Farm.isSingleVillage()) {
+                Farm.setGlobalWaiting()
+
+                if (Farm.settings.singleCycle) {
+                    return Farm.cycle.endStep()
+                }
+
+                Farm.eventQueueTrigger('Farm/fullStorage')
+            }
 
             break
         }

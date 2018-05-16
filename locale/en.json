@@ -25,6 +25,7 @@
     "events.singleCycleEndNoVillages":"No villages available to start the cycle.",
     "events.singleCycleNext":"The list of villages is over, next cycle: %{time}.",
     "events.singleCycleNextNoVillages":"No village available to start the cycle, next cycle: %{time}.",
+    "events.fullStorage":"The storage of the village is full.",
     "general.disabled":"— Disabled —",
     "general.paused":"FarmOverflow paused.",
     "general.started":"FarmOverflow started.",

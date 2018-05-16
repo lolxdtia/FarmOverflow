@@ -725,12 +725,13 @@ define('two/farm', [
          * Detecta mudanças na quantidade de tropas nas aldeias e remove
          * a aldeia da lista de espera caso esteja.
          *
-         * @param  {Object} data - Contém id da aldeia afetada.
+         * @param  {Object} data - Dados da aldeia afetada.
          */
         var armyChangeHandler = function (_, data) {
             var vid = data.village_id
+            var waitingReason = waitingVillages[vid] || false
 
-            if (waitingVillages[vid]) {
+            if (waitingReason === 'units/commands') {
                 delete waitingVillages[vid]
 
                 if (globalWaiting) {
@@ -743,6 +744,8 @@ define('two/farm', [
                     if (Farm.commander.running) {
                         selectVillage(vid)
 
+                        // TODO
+                        // check if this setTimeout is still necessary.
                         setTimeout(function () {
                             Farm.commander.analyse()
                         }, 10000)
@@ -753,8 +756,46 @@ define('two/farm', [
             }
         }
 
+        /**
+         * Detecta mudanças na quantidade de recursos nas aldeias.
+         * Remove ou adiciona a aldeia da lista de espera dependendo
+         * se o armazém está lotado ou não.
+         *
+         * @param  {Object} data - Dados da aldeia afetada.
+         */
+        var resourceChangeHandler = function (_, data) {
+            var vid = data.villageId
+            var waitingReason = waitingVillages[vid] || false
+
+            if (waitingReason === 'fullStorage') {
+                // TODO
+                // move this block of code to a separated function?
+                delete waitingVillages[vid]
+
+                if (globalWaiting) {
+                    globalWaiting = false
+
+                    if (Farm.settings.singleCycle) {
+                        return false
+                    }
+
+                    if (Farm.commander.running) {
+                        selectVillage(vid)
+                        Farm.commander.analyse()
+                    }
+                }
+            } else {
+                var village = getVillageById(vid)
+
+                if (Farm.isFullStorage(village)) {
+                    Farm.setWaitingVillages(vid, 'fullStorage')
+                }
+            }
+        }
+
         rootScope.$on(eventTypeProvider.RECONNECT, reconnectHandler)
         rootScope.$on(eventTypeProvider.VILLAGE_ARMY_CHANGED, armyChangeHandler)
+        rootScope.$on(eventTypeProvider.VILLAGE_RESOURCES_CHANGED, resourceChangeHandler)
     }
 
     /**
@@ -830,6 +871,10 @@ define('two/farm', [
                 }))
             }
         })
+
+        eventQueue.bind('Farm/fullStorage', function () {
+            currentStatus = 'fullStorage'
+        })
     }
 
     /**
@@ -859,16 +904,28 @@ define('two/farm', [
     }
 
     /**
+     * Obtem os dados da aldeia pelo ID.
+     *
+     * @param {Number} vid - ID da aldeia à ser selecionada.
+     * @return {Village} ou {Boolean}
+     */
+    var getVillageById = function (vid) {
+        var i = playerVillages.indexOf(vid)
+
+        return i !== -1 ? playerVillages[i] : false
+    }
+
+    /**
      * Seleciona uma aldeia específica do jogador.
      *
      * @param {Number} vid - ID da aldeia à ser selecionada.
      * @return {Boolean}
      */
     var selectVillage = function (vid) {
-        var i = playerVillages.indexOf(vid)
+        var village = getVillageById(vid)
 
-        if (i !== -1) {
-            selectedVillage = playerVillages[i]
+        if (village) {
+            selectedVillage = village
 
             return true
         }
@@ -1074,21 +1131,6 @@ define('two/farm', [
                 return false
             }
 
-            if (!Farm.settings.ignoreFullRes) {
-                return true
-            }
-
-            var resources = village.original.data.resources
-            var maxStorage = village.original.data.storage
-
-            var isFull = ['wood', 'clay', 'iron'].every(function (res) {
-                return resources[res] === maxStorage
-            })
-
-            if (isFull) {
-                return false
-            }
-
             return true
         })
     }
@@ -1258,7 +1300,7 @@ define('two/farm', [
             },
             ignoreFullRes: {
                 default: true,
-                updates: ['villages'],
+                updates: ['fullStorage'],
                 inputType: 'checkbox'
             }
         }
@@ -1456,6 +1498,14 @@ define('two/farm', [
 
         if (modify.events) {
             Farm.eventQueueTrigger('Farm/resetEvents')
+        }
+
+        if (modify.fullStorage) {
+            for (var vid in waitingVillages) {
+                if (waitingVillages[vid] === 'fullStorage') {
+                    delete waitingVillages[vid]
+                }
+            }
         }
 
         if (Farm.commander.running) {
@@ -1893,9 +1943,11 @@ define('two/farm', [
      * Coloca uma aldeia em modo de espera.
      *
      * @param {Number} id - ID da aldeia.
+     * @param {String=} reason - Identificação do motivo pelo qual a aldeia
+     * foi adicionada a lista de espera.
      */
-    Farm.setWaitingVillages = function (id) {
-        waitingVillages[id] = true
+    Farm.setWaitingVillages = function (id, reason) {
+        waitingVillages[id] = reason || true
     }
 
     /**
@@ -1995,6 +2047,24 @@ define('two/farm', [
      */
     Farm.setLeftVillages = function (villages) {
         leftVillages = villages
+    }
+
+    /**
+     * Detecta se a aldeia está com o armazém lotado.
+     *
+     * @param {Village=} Objeto da aldeia a ser analisada, se não é usado
+     * a aldeia atualmente selecionada.
+     * @return {Boolean}
+     */
+    Farm.isFullStorage = function (village) {
+        village = village || selectedVillage
+
+        var resources = village.original.getResources().getComputed()
+        var maxStorage = village.original.getStorage().current
+
+        return ['wood', 'clay', 'iron'].every(function (res) {
+            return resources[res].currentStock === maxStorage
+        })
     }
 
     // Funções públicas

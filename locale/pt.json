@@ -25,6 +25,7 @@
     "events.singleCycleEndNoVillages": "Nenhuma aldeia disponível para iniciar o ciclo.",
     "events.singleCycleNext": "A lista de aldeias acabou, próximo ciclo: %{time}.",
     "events.singleCycleNextNoVillages": "Nenhuma aldeia disponível para iniciar o ciclo, próximo ciclo: %{time}.",
+    "events.fullStorage":"O armazém da aldeia está cheio.",
     "general.disabled": "— Desativado —",
     "general.paused": "FarmOverflow pausado.",
     "general.started": "FarmOverflow iniciado.",

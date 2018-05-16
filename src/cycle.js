@@ -52,7 +52,11 @@ define('two/farm/cycle', [
 
         if (Farm.getFreeVillages().length === 0) {
             if (Farm.isSingleVillage()) {
-                Farm.eventQueueTrigger('Farm/noUnits')
+                if (Farm.isFullStorage()) {
+                    Farm.eventQueueTrigger('Farm/fullStorage')
+                } else {
+                    Farm.eventQueueTrigger('Farm/noUnits')
+                }
             } else {
                 Farm.eventQueueTrigger('Farm/noVillages')
             }

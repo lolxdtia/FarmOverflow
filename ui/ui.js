@@ -662,6 +662,10 @@ define('two/farm/ui', [
             utils.emitNotif('error', Locale('farm', localeKey, replaces))
         })
 
+        eventQueue.bind('Farm/fullStorage', function () {
+            $status.html(Locale('farm', 'events.fullStorage'))
+        })
+
         if (modelDataService.getPresetList().isLoaded()) {
             updatePresetList()
         }
