@@ -327,13 +327,13 @@ define('two/farm/ui', [
 
             for (var id in groups) {
                 var name = groups[id].name
-                var selected = Farm.settings[type] == id
+                var value = Farm.settings[type]
 
-                if (Farm.settings[type] === '') {
+                if (value === '' || value === '0') {
                     $selectedOption.html(disabled)
                     $groups[type][0].dataset.name = disabled
                     $groups[type][0].dataset.value = ''
-                } else if (Farm.settings[type] == id) {
+                } else if (value == id) {
                     $selectedOption.html(name)
                     $groups[type][0].dataset.name = name
                     $groups[type][0].dataset.value = id
