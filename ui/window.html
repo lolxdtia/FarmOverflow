@@ -7,12 +7,7 @@
     </header>
 
     <div class="tabs tabs-bg">
-        <div class="tabs-three-col">
-            <div class="tab" tab="info">
-                <div class="tab-inner">
-                    <div><a href="#" class="btn-icon btn-orange"><#= locale("common", "info") #></a></div>
-                </div>
-            </div>
+        <div class="tabs-two-col">
             <div class="tab" tab="settings">
                 <div class="tab-inner">
                     <div><a href="#" class="btn-icon btn-orange"><#= locale("common", "settings") #></a></div>
@@ -20,93 +15,29 @@
             </div>
             <div class="tab" tab="log">
                 <div class="tab-inner">
-                    <div><a href="#" class="btn-icon btn-orange"><#= locale("common", "registers") #></a></div>
+                    <div><a href="#" class="btn-icon btn-orange"><#= locale("common", "logs") #></a></div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="win-main">
-        <!-- INFORMAÇÕES -->
-        <div class="box-paper footer has-footer-upper twOverflow-content-info">
-            <!-- <img src="https://i.imgur.com/0ZBQWrb.png"/> -->
-            <p class="center"><#- locale("farm", "info.developedBy") #> <a href="<#- author.url #>"><#- author.name #></a>  &lt;<#- author.email #>&gt;</p>
-
-            <!--
-            <h5 class="twx-section collapse"><#- locale("farm", "info.notice1") #></h5>
-            <div>
-                <p style="height:80px"><#- locale("farm", "info.notice2") #></p>
-            </div>
-            -->
-
-            <h5 class="twx-section collapse"><#- locale("farm", "info.presets1") #></h5>
-            <div>
-                <p><#- locale("farm", "info.presets2") #></p>
-                <p><#- locale("farm", "info.presets3") #></p>
-                <p><#- locale("farm", "info.presets4") #></p>
-                <p><#- locale("farm", "info.presets5") #></p>
-                <p>
-                    <span class="sample">Farm (Spears), Farm \"Lança\", Farm {Light}</span>
-                </p>
-                <p><#- locale("farm", "info.presets6") #></p>
-            </div>
-            <h5 class="twx-section collapse"><#- locale("farm", "info.ignore1") #></h5>
-            <div>
-                <p><#- locale("farm", "info.ignore2") #></p>
-            </div>
-            <h5 class="twx-section collapse"><#- locale("farm", "info.include1") #></h5>
-            <div>
-                <p><#- locale("farm", "info.include2") #></p>
-            </div>
-            <h5 class="twx-section collapse"><#- locale("farm", "info.randomBase1") #></h5>
-            <div>
-                <p><#- locale("farm", "info.randomBase2") #></p>
-            </div>
-            <h5 class="twx-section collapse"><#- locale("farm", "info.groupOnly1") #></h5>
-            <div>
-                <p><#- locale("farm", "info.groupOnly2") #></p>
-            </div>
-            <h5 class="twx-section collapse"><#- locale("farm", "info.ignoreOnLoss1") #></h5>
-            <div>
-                <p><#- locale("farm", "info.ignoreOnLoss2") #></p>
-                <p><#- locale("farm", "info.ignoreOnLoss3") #></p>
-            </div>
-            <h5 class="twx-section collapse"><#- locale("farm", "info.priorityTargets1") #></h5>
-            <div>
-                <p><#- locale("farm", "info.priorityTargets2") #></p>
-            </div>
-            <h5 class="twx-section collapse"><#- locale("farm", "info.remote1") #></h5>
-            <div>
-                <p><#- locale("farm", "info.remote2") #></p>
-                <p><#- locale("farm", "info.remote3") #></p>
-                <p><#- locale("farm", "info.remote4") #></p>
-                <p>&bull; <b>on</b> <i><#- locale("farm", "info.remote5") #></i></p>
-                <p>&bull; <b>off</b> <i><#- locale("farm", "info.remote6") #></i></p>
-                <p>&bull; <b>status</b> <i><#- locale("farm", "info.remote7") #></i></p>
-                <p><#- locale("farm", "info.remote8") #></p>
-                <p><#- locale("farm", "info.remote9") #></p>
-                <p><#- locale("farm", "info.remote10") #></p>
-            </div>
-
-            <!-- Por algum motivo é preciso ter algum elemento visivel no final da aba para não quebrar o scrollbar -->
-            <div></div>
-        </div>
-
         <!-- CONFIGURAÇÕES -->
         <div class="box-paper footer has-footer-upper twOverflow-content-settings">
+            <p class="center"><#= locale("farm", "settings.docs") #> <a href="https://github.com/TWOverflow/FarmOverflow/wiki/Documentation" target="_blank"><#= locale("common", "here") #></a>.</p>
+
             <form class="settings">
-                <h5 class="twx-section collapse"><#= locale("farm", "settings.basicSettings") #></h5>
+                <h5 class="twx-section collapse"><#= locale("farm", "settings.settings") #></h5>
                 <table class="tbl-border-light tbl-striped">
                     <colgroup>
-                        <col width="50%">
+                        <col width="40%">
                         <col>
                     </colgroup>
                     <tbody>
                         <tr>
                             <td>
                                 <span class="icon-34x34-preset"></span>
-                                <span class="ff-cell-fix"><#= locale("farm", "settings.presetName") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.presets") #>">?</span>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.presets") #></span>
                             </td>
                             <td>
                                 <select data-setting="presetName" class="preset"></select>
@@ -116,7 +47,6 @@
                             <td>
                                 <span class="icon-20x20-queue-indicator-short"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.groupIgnore") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.groupIgnore") #>">?</span>
                             </td>
                             <td>
                                 <select data-setting="groupIgnore" class="ignore"></select>
@@ -126,7 +56,6 @@
                             <td>
                                 <span class="icon-20x20-queue-indicator-long"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.groupInclude") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.groupInclude") #>">?</span>
                             </td>
                             <td>
                                 <select data-setting="groupInclude" class="include"></select>
@@ -136,7 +65,6 @@
                             <td>
                                 <span class="icon-20x20-favourite"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.groupOnly") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.groupOnly") #>">?</span>
                             </td>
                             <td>
                                 <select data-setting="groupOnly" class="only"></select>
@@ -145,7 +73,6 @@
                         <tr>
                             <td>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.randomBase") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.randomBase") #>">?</span>
                             </td>
                             <td>
                                 <input data-setting="randomBase" type="number" class="textfield-border" min="0" required>
@@ -154,7 +81,6 @@
                         <tr>
                             <td>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.commandsPerVillage") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.commandsPerVillage") #>">?</span>
                             </td>
                             <td>
                                 <input data-setting="commandsPerVillage" type="number" class="textfield-border" min="0" max="50" required>
@@ -164,7 +90,6 @@
                             <td>
                                 <span class="icon-34x34-name_changed"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.priorityTargets") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.priorityTargets") #>">?</span>
                             </td>
                             <td>
                                 <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-priorityTargets">
@@ -175,7 +100,6 @@
                         <tr>
                             <td>
                                 <span class="ff-cell-fix"><#- locale("farm", "settings.ignoreOnLoss") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.ignoreOnLoss") #>">?</span>
                             </td>
                             <td>
                                 <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-ignoreOnLoss">
@@ -199,14 +123,13 @@
                 <h5 class="twx-section collapse"><#= locale("farm", "settings.stepCycle/header") #></h5>
                 <table class="tbl-border-light tbl-striped">
                     <colgroup>
-                        <col width="50%">
+                        <col width="40%">
                         <col>
                     </colgroup>
                     <tbody>
                         <tr>
                             <td>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.stepCycle") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.stepCycle") #>">?</span>
                             </td>
                             <td>
                                 <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-stepCycle">
@@ -216,8 +139,13 @@
                         </tr>
                         <tr>
                             <td>
+                                <span class="ff-cell-fix"><#= locale("farm", "settings.stepCycle/interval") #></span>
+                            </td>
+                            <td><input data-setting="stepCycleInterval" type="text" class="textfield-border" placeholder="00:00:00"></td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.stepCycle/notifs") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.stepCycle/notifs") #>">?</span>
                             </td>
                             <td>
                                 <label class="size-26x26 btn-orange icon-26x26-checkbox" for="settings-stepCycle/notifs">
@@ -225,20 +153,13 @@
                                 </label>
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                <span class="ff-cell-fix"><#= locale("farm", "settings.stepCycle/interval") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.stepCycle/interval") #>">?</span>
-                            </td>
-                            <td><input data-setting="stepCycleInterval" type="text" class="textfield-border" placeholder="00:00:00"></td>
-                        </tr>
                     </tbody>
                 </table>
 
-                <h5 class="twx-section collapse"><#= locale("common", "filters") #></h5>
+                <h5 class="twx-section collapse"><#= locale("farm", "settings.targetFilters") #></h5>
                 <table class="tbl-border-light tbl-striped">
                     <colgroup>
-                        <col width="50%">
+                        <col width="40%">
                         <col>
                     </colgroup>
                     <tbody>
@@ -280,10 +201,10 @@
                     </tbody>
                 </table>
 
-                <h5 class="twx-section collapse"><#= locale("common", "registers") #></h5>
+                <h5 class="twx-section collapse"><#= locale("common", "logs") #></h5>
                 <table class="tbl-border-light tbl-striped">
                     <colgroup>
-                        <col width="50%">
+                        <col width="40%">
                         <col>
                     </colgroup>
                     <tbody>
@@ -333,7 +254,7 @@
                 <h5 class="twx-section collapse"><#= locale("common", "others") #></h5>
                 <table class="tbl-border-light tbl-striped">
                     <colgroup>
-                        <col width="50%">
+                        <col width="40%">
                         <col>
                     </colgroup>
                     <tbody>
@@ -341,7 +262,6 @@
                             <td>
                                 <span class="icon-26x26-message-misc"></span>
                                 <span class="ff-cell-fix"><#= locale("farm", "settings.remote") #></span>
-                                <span class="helper" tooltip="<#= locale("farm", "tooltip.remote") #>">?</span>
                             </td>
                             <td><input data-setting="remoteId" type="text" class="textfield-border" min="3" max="45"></td>
                         </tr>
@@ -382,7 +302,7 @@
                     </tbody>
                 </table>
 
-                <h5 class="twx-section collapse"><#= locale("common", "registers") #></h5>
+                <h5 class="twx-section collapse"><#= locale("common", "logs") #></h5>
                 <table class="tbl-border-light tbl-news tbl-big-header">
                     <colgroup>
                         <col width="76px">

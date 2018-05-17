@@ -454,7 +454,7 @@ define('two/farm/ui', [
         disabled = Locale('farm', 'general.disabled')
 
         ui = new Interface('FarmOverflow', {
-            activeTab: 'info',
+            activeTab: 'settings',
             template: '__farm_html_window',
             replaces: {
                 version: Farm.version,
@@ -464,7 +464,7 @@ define('two/farm/ui', [
             css: '__farm_css_style'
         })
 
-        opener = new FrontButton('Farm')
+        opener = new FrontButton('Farmer')
         opener.hover(updateQuickview)
         opener.click(function () {
             ui.openWindow()

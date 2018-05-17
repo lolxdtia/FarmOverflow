@@ -1264,17 +1264,17 @@ define('two/farm', [
                 inputType: 'select'
             },
             groupIgnore: {
-                default: '',
+                default: '0',
                 updates: ['groups'],
                 inputType: 'select'
             },
             groupInclude: {
-                default: '',
+                default: '0',
                 updates: ['groups', 'targets'],
                 inputType: 'select'
             },
             groupOnly: {
-                default: '',
+                default: '0',
                 updates: ['groups', 'villages', 'targets'],
                 inputType: 'select'
             },
