@@ -1362,7 +1362,7 @@ define('two/farm', [
             },
             commandsPerVillage: {
                 default: 48,
-                updates: [],
+                updates: ['waitingVillages'],
                 inputType: 'text',
                 min: 1,
                 max: 50
@@ -1576,6 +1576,14 @@ define('two/farm', [
         if (modify.fullStorage) {
             for (var vid in waitingVillages) {
                 if (waitingVillages[vid] === 'fullStorage') {
+                    delete waitingVillages[vid]
+                }
+            }
+        }
+
+        if (modify.waitingVillages) {
+            for (var vid in waitingVillages) {
+                if (waitingVillages[vid] === 'units/commands') {
                     delete waitingVillages[vid]
                 }
             }
