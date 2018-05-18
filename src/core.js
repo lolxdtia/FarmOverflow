@@ -729,9 +729,9 @@ define('two/farm', [
          */
         var armyChangeHandler = function (_, data) {
             var vid = data.village_id
-            var waitingReason = waitingVillages[vid] || false
+            var reason = waitingVillages[vid] || false
 
-            if (waitingReason === 'units/commands') {
+            if (reason === 'units' || reason === 'commands') {
                 delete waitingVillages[vid]
 
                 if (globalWaiting) {
@@ -1583,7 +1583,7 @@ define('two/farm', [
 
         if (modify.waitingVillages) {
             for (var vid in waitingVillages) {
-                if (waitingVillages[vid] === 'units/commands') {
+                if (waitingVillages[vid] === 'commands') {
                     delete waitingVillages[vid]
                 }
             }

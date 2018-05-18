@@ -148,7 +148,7 @@ define('two/farm/Commander', [
             break
         case 'noUnits':
             Farm.triggerEvent('Farm/noUnits', [selectedVillage])
-            Farm.setWaitingVillage(sid, 'units/commands')
+            Farm.setWaitingVillage(sid, 'units')
 
             if (Farm.isSingleVillage()) {
                 if (selectedVillage.countCommands() === 0) {
@@ -172,7 +172,7 @@ define('two/farm/Commander', [
 
             break
         case 'commandLimit':
-            Farm.setWaitingVillage(sid, 'units/commands')
+            Farm.setWaitingVillage(sid, 'commands')
 
             var singleVillage = Farm.isSingleVillage()
             var allWaiting = Farm.isAllWaiting()
