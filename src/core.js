@@ -640,13 +640,10 @@ define('two/farm', [
     }
 
     /**
-     * Funções relacionadas com grupos e presets.
+     * Detecta alterações e atualiza lista de predefinições
+     * configuradas no script.
      */
-    var groupPresetListener = function () {
-        /**
-         * Detecta alterações e atualiza lista de predefinições
-         * configuradas no script.
-         */
+    var presetListener = function () {
         var updatePresetsHandler = function () {
             updatePresets()
             Farm.triggerEvent('Farm/presets/change')
@@ -666,12 +663,20 @@ define('two/farm', [
             }
         }
 
+        rootScope.$on(eventTypeProvider.ARMY_PRESET_UPDATE, updatePresetsHandler)
+        rootScope.$on(eventTypeProvider.ARMY_PRESET_DELETED, updatePresetsHandler)
+    }
+
+    /**
+     * Mantém a lista de aldeias atualizadas de acordo com os grupos.
+     */
+    var groupListener = function () {
         /**
          * Atualiza lista de grupos configurados no script.
          * Atualiza a lista de aldeias incluidas/ignoradas com base
          * nos grupos.
          */
-        var updateGroupsHandler = function () {
+        var groupChangeHandler = function () {
             updateExceptionGroups()
             updateExceptionVillages()
 
@@ -684,7 +689,7 @@ define('two/farm', [
          *
          * @param  {Object} data - Dados do grupo retirado/adicionado.
          */
-        var updateGroupVillages = function (_, data) {
+        var groupLinkHandler = function (_, data) {
             updatePlayerVillages()
 
             if (!groupInclude) {
@@ -696,28 +701,37 @@ define('two/farm', [
             }
         }
 
-        rootScope.$on(eventTypeProvider.ARMY_PRESET_UPDATE, updatePresetsHandler)
-        rootScope.$on(eventTypeProvider.ARMY_PRESET_DELETED, updatePresetsHandler)
-        rootScope.$on(eventTypeProvider.GROUPS_UPDATED, updateGroupsHandler)
-        rootScope.$on(eventTypeProvider.GROUPS_CREATED, updateGroupsHandler)
-        rootScope.$on(eventTypeProvider.GROUPS_DESTROYED, updateGroupsHandler)
-        rootScope.$on(eventTypeProvider.GROUPS_VILLAGE_LINKED, updateGroupVillages)
-        rootScope.$on(eventTypeProvider.GROUPS_VILLAGE_UNLINKED, updateGroupVillages)
+        rootScope.$on(eventTypeProvider.GROUPS_UPDATED, groupChangeHandler)
+        rootScope.$on(eventTypeProvider.GROUPS_CREATED, groupChangeHandler)
+        rootScope.$on(eventTypeProvider.GROUPS_DESTROYED, groupChangeHandler)
+        rootScope.$on(eventTypeProvider.GROUPS_VILLAGE_LINKED, groupLinkHandler)
+        rootScope.$on(eventTypeProvider.GROUPS_VILLAGE_UNLINKED, groupLinkHandler)
     }
 
     /**
-     * Detecta todos eventos importantes para o funcionamento do FarmOverflow.
+     * Mantém a lista de aldeias da lista de espera atualizadas.
      */
-    var generalListeners = function () {
+    var villageListener = function () {
         /**
-         * Detecta quando a conexão é reestabelecida, podendo
-         * reiniciar o script.
+         * Remove uma aldeia da lista de espera e reinicia o ciclo
+         * de ataques caso necessário.
+         *
+         * @param  {Object} vid - ID da aldeia.
          */
-        var reconnectHandler = function () {
-            if (Farm.commander.running) {
-                setTimeout(function () {
-                    Farm.restart()
-                }, 5000)
+        var freeVillage = function (vid) {
+            delete waitingVillages[vid]
+
+            if (globalWaiting) {
+                globalWaiting = false
+
+                if (Farm.settings.stepCycle) {
+                    return false
+                }
+
+                if (Farm.commander.running) {
+                    selectVillage(vid)
+                    Farm.commander.analyse()
+                }
             }
         }
 
@@ -732,25 +746,7 @@ define('two/farm', [
             var reason = waitingVillages[vid] || false
 
             if (reason === 'units' || reason === 'commands') {
-                delete waitingVillages[vid]
-
-                if (globalWaiting) {
-                    globalWaiting = false
-
-                    if (Farm.settings.stepCycle) {
-                        return false
-                    }
-
-                    if (Farm.commander.running) {
-                        selectVillage(vid)
-
-                        // TODO
-                        // check if this setTimeout is still necessary.
-                        setTimeout(function () {
-                            Farm.commander.analyse()
-                        }, 10000)
-                    }
-                }
+                freeVillage(vid)
 
                 return false
             }
@@ -765,25 +761,10 @@ define('two/farm', [
          */
         var resourceChangeHandler = function (_, data) {
             var vid = data.villageId
-            var waitingReason = waitingVillages[vid] || false
+            var reason = waitingVillages[vid] || false
 
-            if (waitingReason === 'fullStorage') {
-                // TODO
-                // move this block of code to a separated function?
-                delete waitingVillages[vid]
-
-                if (globalWaiting) {
-                    globalWaiting = false
-
-                    if (Farm.settings.stepCycle) {
-                        return false
-                    }
-
-                    if (Farm.commander.running) {
-                        selectVillage(vid)
-                        Farm.commander.analyse()
-                    }
-                }
+            if (reason === 'fullStorage') {
+                freeVillage(vid)
             } else {
                 var village = getVillageById(vid)
 
@@ -793,9 +774,34 @@ define('two/farm', [
             }
         }
 
-        rootScope.$on(eventTypeProvider.RECONNECT, reconnectHandler)
         rootScope.$on(eventTypeProvider.VILLAGE_ARMY_CHANGED, armyChangeHandler)
         rootScope.$on(eventTypeProvider.VILLAGE_RESOURCES_CHANGED, resourceChangeHandler)
+    }
+
+    /**
+     * Listeners em geral.
+     */
+    var generalListeners = function () {
+        /**
+         * Detecta quando a conexão é reestabelecida, podendo
+         * reiniciar o script.
+         */
+        var reconnectHandler = function () {
+            if (Farm.commander.running) {
+                setTimeout(function () {
+                    Farm.restart()
+                }, 5000)
+            }
+        }
+
+        // Carrega pedaços da mapa quando chamado.
+        // É disparado quando o método $mapData.loadTownDataAsync
+        // é executado.
+        $mapData.setRequestFn(function (args) {
+            socketService.emit(routeProvider.MAP_GETVILLAGES, args)
+        })
+
+        rootScope.$on(eventTypeProvider.RECONNECT, reconnectHandler)
     }
 
     /**
@@ -1204,6 +1210,20 @@ define('two/farm', [
         return processedTargets
     }
 
+    /**
+     * Carrega as configurações do usuário e mescla com
+     * as configurações padrões.
+     */
+    var loadSettings = function () {
+        var localSettings = Lockr.get('farm-settings', {}, true)
+
+        for (var key in Farm.settingsMap) {
+            Farm.settings[key] = localSettings.hasOwnProperty(key)
+                ? localSettings[key]
+                : Farm.settingsMap[key].default
+        }
+    }
+
     var Farm = {}
 
     /**
@@ -1213,209 +1233,188 @@ define('two/farm', [
      */
     Farm.version = '__farm_version'
 
+    /**
+     * Configurações do jogador + configurações padrões
+     *
+     * @type {Object}
+     */
+    Farm.settings = {}
+
+    /**
+     * Informações de cada opção.
+     *
+     * @type {Object}
+     */
+    Farm.settingsMap = {
+        maxDistance: {
+            default: 10,
+            updates: ['targets'],
+            inputType: 'text',
+            min: 0,
+            max: 50
+        },
+        minDistance: {
+            default: 0,
+            updates: ['targets'],
+            inputType: 'text',
+            min: 0,
+            max: 50
+        },
+        maxTravelTime: {
+            default: '01:00:00',
+            updates: [],
+            inputType: 'text',
+            pattern: /\d{1,2}\:\d{2}\:\d{2}/
+        },
+        randomBase: {
+            default: 3,
+            updates: [],
+            inputType: 'text',
+            min: 0,
+            max: 9999
+        },
+        presetName: {
+            default: '',
+            updates: ['preset'],
+            inputType: 'select'
+        },
+        groupIgnore: {
+            default: '0',
+            updates: ['groups'],
+            inputType: 'select'
+        },
+        groupInclude: {
+            default: '0',
+            updates: ['groups', 'targets'],
+            inputType: 'select'
+        },
+        groupOnly: {
+            default: '0',
+            updates: ['groups', 'villages', 'targets'],
+            inputType: 'select'
+        },
+        minPoints: {
+            default: 0,
+            updates: ['targets'],
+            inputType: 'text',
+            min: 0,
+            max: 13000
+        },
+        maxPoints: {
+            default: 12500,
+            updates: ['targets'],
+            inputType: 'text',
+            min: 0,
+            max: 13000
+        },
+        eventsLimit: {
+            default: 20,
+            updates: ['events'],
+            inputType: 'text',
+            min: 0,
+            max: 150
+        },
+        ignoreOnLoss: {
+            default: true,
+            updates: [],
+            inputType: 'checkbox'
+        },
+        priorityTargets: {
+            default: true,
+            updates: [],
+            inputType: 'checkbox'
+        },
+        eventAttack: {
+            default: true,
+            updates: ['events'],
+            inputType: 'checkbox'
+        },
+        eventVillageChange: {
+            default: true,
+            updates: ['events'],
+            inputType: 'checkbox'
+        },
+        eventPriorityAdd: {
+            default: true,
+            updates: ['events'],
+            inputType: 'checkbox'
+        },
+        eventIgnoredVillage: {
+            default: true,
+            updates: ['events'],
+            inputType: 'checkbox'
+        },
+        remoteId: {
+            default: 'remote',
+            updates: [],
+            inputType: 'text'
+        },
+        hotkeySwitch: {
+            default: 'shift+z',
+            updates: [],
+            inputType: 'text'
+        },
+        hotkeyWindow: {
+            default: 'z',
+            updates: [],
+            inputType: 'text'
+        },
+        stepCycle: {
+            default: false,
+            updates: ['villages'],
+            inputType: 'checkbox'
+        },
+        stepCycleNotifs: {
+            default: false,
+            updates: [],
+            inputType: 'checkbox'
+        },
+        stepCycleInterval: {
+            default: '00:00:00',
+            updates: [],
+            inputType: 'text',
+            pattern: /\d{1,2}\:\d{2}\:\d{2}/
+        },
+        commandsPerVillage: {
+            default: 48,
+            updates: ['waitingVillages'],
+            inputType: 'text',
+            min: 1,
+            max: 50
+        },
+        ignoreFullStorage: {
+            default: true,
+            updates: ['fullStorage'],
+            inputType: 'checkbox'
+        }
+    }
+
     Farm.init = function () {
         Locale.create('farm', __farm_locale, 'en')
 
         initialized = true
-
-        /**
-         * Configurações salvas localmente
-         *
-         * @type {Object}
-         */
-        var localSettings = Lockr.get('farm-settings', {}, true)
-
-        /**
-         * Informações de cada opção.
-         *
-         * @type {Object}
-         */
-        Farm.settingsMap = {
-            maxDistance: {
-                default: 10,
-                updates: ['targets'],
-                inputType: 'text',
-                min: 0,
-                max: 50
-            },
-            minDistance: {
-                default: 0,
-                updates: ['targets'],
-                inputType: 'text',
-                min: 0,
-                max: 50
-            },
-            maxTravelTime: {
-                default: '01:00:00',
-                updates: [],
-                inputType: 'text',
-                pattern: /\d{1,2}\:\d{2}\:\d{2}/
-            },
-            randomBase: {
-                default: 3,
-                updates: [],
-                inputType: 'text',
-                min: 0,
-                max: 9999
-            },
-            presetName: {
-                default: '',
-                updates: ['preset'],
-                inputType: 'select'
-            },
-            groupIgnore: {
-                default: '0',
-                updates: ['groups'],
-                inputType: 'select'
-            },
-            groupInclude: {
-                default: '0',
-                updates: ['groups', 'targets'],
-                inputType: 'select'
-            },
-            groupOnly: {
-                default: '0',
-                updates: ['groups', 'villages', 'targets'],
-                inputType: 'select'
-            },
-            minPoints: {
-                default: 0,
-                updates: ['targets'],
-                inputType: 'text',
-                min: 0,
-                max: 13000
-            },
-            maxPoints: {
-                default: 12500,
-                updates: ['targets'],
-                inputType: 'text',
-                min: 0,
-                max: 13000
-            },
-            eventsLimit: {
-                default: 20,
-                updates: ['events'],
-                inputType: 'text',
-                min: 0,
-                max: 150
-            },
-            ignoreOnLoss: {
-                default: true,
-                updates: [],
-                inputType: 'checkbox'
-            },
-            priorityTargets: {
-                default: true,
-                updates: [],
-                inputType: 'checkbox'
-            },
-            eventAttack: {
-                default: true,
-                updates: ['events'],
-                inputType: 'checkbox'
-            },
-            eventVillageChange: {
-                default: true,
-                updates: ['events'],
-                inputType: 'checkbox'
-            },
-            eventPriorityAdd: {
-                default: true,
-                updates: ['events'],
-                inputType: 'checkbox'
-            },
-            eventIgnoredVillage: {
-                default: true,
-                updates: ['events'],
-                inputType: 'checkbox'
-            },
-            remoteId: {
-                default: 'remote',
-                updates: [],
-                inputType: 'text'
-            },
-            hotkeySwitch: {
-                default: 'shift+z',
-                updates: [],
-                inputType: 'text'
-            },
-            hotkeyWindow: {
-                default: 'z',
-                updates: [],
-                inputType: 'text'
-            },
-            stepCycle: {
-                default: false,
-                updates: ['villages'],
-                inputType: 'checkbox'
-            },
-            stepCycleNotifs: {
-                default: false,
-                updates: [],
-                inputType: 'checkbox'
-            },
-            stepCycleInterval: {
-                default: '00:00:00',
-                updates: [],
-                inputType: 'text',
-                pattern: /\d{1,2}\:\d{2}\:\d{2}/
-            },
-            commandsPerVillage: {
-                default: 48,
-                updates: ['waitingVillages'],
-                inputType: 'text',
-                min: 1,
-                max: 50
-            },
-            ignoreFullStorage: {
-                default: true,
-                updates: ['fullStorage'],
-                inputType: 'checkbox'
-            }
-        }
-
-        /**
-         * Configurações do jogador + configurações padrões
-         *
-         * @type {Object}
-         */
-        Farm.settings = {}
-
-        for (var key in Farm.settingsMap) {
-            var defaultValue = Farm.settingsMap[key].default
-
-            Farm.settings[key] = localSettings.hasOwnProperty(key)
-                ? localSettings[key]
-                : defaultValue
-        }
-
         Farm.commander = Farm.createCommander()
+        $player = modelDataService.getSelectedCharacter()
 
         lastEvents = Lockr.get('farm-lastEvents', [], true)
         lastActivity = Lockr.get('farm-lastActivity', $timeHelper.gameTime(), true)
         lastAttack = Lockr.get('farm-lastAttack', -1, true)
         targetIndexes = Lockr.get('farm-indexes', {}, true)
 
-        $player = modelDataService.getSelectedCharacter()
-
+        loadSettings()
         updateExceptionGroups()
         updateExceptionVillages()
         updatePlayerVillages()
         updatePresets()
         reportListener()
         messageListener()
-        groupPresetListener()
+        groupListener()
+        presetListener()
+        villageListener()
         generalListeners()
         bindEvents()
         initPersistentRunning()
         initTargetsProof()
-
-        // Carrega pedaços da mapa quando chamado.
-        // É disparado quando o método $mapData.loadTownDataAsync
-        // é executado.
-        $mapData.setRequestFn(function (args) {
-            socketService.emit(routeProvider.MAP_GETVILLAGES, args)
-        })
     }
 
     /**
@@ -1516,10 +1515,13 @@ define('two/farm', [
      */
     Farm.updateSettings = function (changes) {
         var modify = {}
+        var settingMap
+        var newValue
+        var vid
 
         for (var key in changes) {
-            var settingMap = Farm.settingsMap[key]
-            var newValue = changes[key]
+            settingMap = Farm.settingsMap[key]
+            newValue = changes[key]
 
             if (!settingMap || newValue === Farm.settings[key]) {
                 continue
@@ -1574,7 +1576,7 @@ define('two/farm', [
         }
 
         if (modify.fullStorage) {
-            for (var vid in waitingVillages) {
+            for (vid in waitingVillages) {
                 if (waitingVillages[vid] === 'fullStorage') {
                     delete waitingVillages[vid]
                 }
@@ -1582,7 +1584,7 @@ define('two/farm', [
         }
 
         if (modify.waitingVillages) {
-            for (var vid in waitingVillages) {
+            for (vid in waitingVillages) {
                 if (waitingVillages[vid] === 'commands') {
                     delete waitingVillages[vid]
                 }
@@ -2089,11 +2091,7 @@ define('two/farm', [
      */
     Farm.getFreeVillages = function () {
         return playerVillages.filter(function (village) {
-            if (waitingVillages[village.id]) {
-                return false
-            }
-
-            return true
+            return !waitingVillages[village.id]
         })
     }
 
