@@ -7,7 +7,6 @@ define('two/farm/ui', [
     'two/utils',
     'two/eventQueue',
     'helper/time',
-    'Lockr',
     'ejs'
 ], function (
     Farm,
@@ -18,7 +17,6 @@ define('two/farm/ui', [
     utils,
     eventQueue,
     $timeHelper,
-    Lockr,
     ejs
 ) {
     var ui

@@ -9,6 +9,7 @@ define('two/farm', [
     'helper/mapconvert',
     'helper/time',
     'conf/locale',
+    'conf/gameStates',
     'Lockr'
 ], function (
     Locale,
@@ -21,6 +22,7 @@ define('two/farm', [
     $convert,
     $timeHelper,
     gameLocale,
+    GAME_STATES,
     Lockr
 ) {
     /**
@@ -247,6 +249,11 @@ define('two/farm', [
      * @type {Object}
      */
     var $player
+
+    /**
+     * @type {Object}
+     */
+    var $gameState
 
     /**
      * Lista de filtros chamados no momendo do carregamento de alvos do mapa.
@@ -1395,6 +1402,7 @@ define('two/farm', [
         initialized = true
         Farm.commander = Farm.createCommander()
         $player = modelDataService.getSelectedCharacter()
+        $gameState = modelDataService.getGameState()
 
         lastEvents = Lockr.get('farm-lastEvents', [], true)
         lastActivity = Lockr.get('farm-lastActivity', $timeHelper.gameTime(), true)
@@ -1443,6 +1451,15 @@ define('two/farm', [
             return false
         }
 
+        if (!$gameState.getGameState(GAME_STATES.ALL_VILLAGES_READY)) {
+            var unbind = rootScope.$on(eventTypeProvider.GAME_STATE_ALL_VILLAGES_READY, function () {
+                unbind()
+                Farm.start()
+            })
+
+            return false
+        }
+
         if (isExpiredData()) {
             priorityTargets = {}
             targetIndexes = {}
@@ -1465,17 +1482,23 @@ define('two/farm', [
      * @return {Boolean}
      */
     Farm.pause = function () {
-        clearTimeout(Farm.commander.timeoutId)
-        clearTimeout(Farm.cycle.getTimeoutId())
-
-        Farm.commander.running = false
+        Farm.breakCommander()
         Farm.triggerEvent('Farm/pause')
+        clearTimeout(Farm.cycle.getTimeoutId())
 
         if (notifsEnabled) {
             utils.emitNotif('success', Locale('common', 'paused'))
         }
 
         return true
+    }
+
+    /**
+     * Stop commander without stopping the whole farm
+     */
+    Farm.breakCommander = function () {
+        clearTimeout(Farm.commander.timeoutId)
+        Farm.commander.running = false
     }
 
     /**
@@ -1785,7 +1808,6 @@ define('two/farm', [
         } else {
             leftVillages = Farm.getFreeVillages()
 
-
             if (leftVillages.length) {
                 return Farm.nextVillage()
             }
@@ -2076,12 +2098,17 @@ define('two/farm', [
     Farm.isFullStorage = function (village) {
         village = village || selectedVillage
 
-        var resources = village.original.getResources().getComputed()
-        var maxStorage = village.original.getStorage().current
+        if (village.original.isReady()) {
+            var resources = village.original.getResources()
+            var computed = resources.getComputed()
+            var maxStorage = resources.getMaxStorage()
 
-        return ['wood', 'clay', 'iron'].every(function (res) {
-            return resources[res].currentStock === maxStorage
-        })
+            return ['wood', 'clay', 'iron'].every(function (res) {
+                return computed[res].currentStock === maxStorage
+            })
+        }
+
+        return false
     }
 
     /**
@@ -2091,7 +2118,16 @@ define('two/farm', [
      */
     Farm.getFreeVillages = function () {
         return playerVillages.filter(function (village) {
-            return !waitingVillages[village.id]
+            if (waitingVillages[village.id]) {
+                return false
+            } else if (Farm.settings.ignoreFullStorage) {
+                if (Farm.isFullStorage(village)) {
+                    waitingVillages[village.id] = 'fullStorage'
+                    return false
+                }
+            }
+
+            return true
         })
     }
 

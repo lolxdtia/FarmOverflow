@@ -96,8 +96,8 @@ define('two/farm/cycle', [
             if (cycle.intervalEnabled()) {
                 Farm.triggerEvent('Farm/stepCycle/next/noVillages')
                 cycle.setNextCycle()
-            } else {
-                // emit apenas uma notificação de erro
+            } else 
+{                // emit apenas uma notificação de erro
                 Farm.triggerEvent('Farm/stepCycle/next/noVillages')
 
                 Farm.tempDisableNotifs(function () {
@@ -125,6 +125,7 @@ define('two/farm/cycle', [
     cycle.endStep = function () {
         if (cycle.intervalEnabled()) {
             Farm.triggerEvent('Farm/stepCycle/next')
+            Farm.breakCommander()
             cycle.setNextCycle()
         } else {
             Farm.triggerEvent('Farm/stepCycle/end')
